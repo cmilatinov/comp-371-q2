@@ -27,10 +27,13 @@ Camera camera;
 GLfloat delta_time = 0.0f;
 GLfloat last_time = 0.0f;
 
+// When debugging, the code will execute from "out/build/x64-Debug/". That last folder will have the name of your configuration.
+// We need to go three levels back to the root directory and into "src" before we can see the "Shaders" folder.
+// The build directory might be different with other IDEs and OS, just add a preprocessor conditional statement for your case when you encounter it.
 // Vertex Shader file path
-static const char* vertex_path = "Shaders/shader.vert";
+static const char* vertex_path = "../../../src/Shaders/shader.vert";
 // Fragment Shader file path
-static const char* fragment_path = "Shaders/shader.frag";
+static const char* fragment_path = "../../../src/Shaders/shader.frag";
 
 void create_objects()
 {
