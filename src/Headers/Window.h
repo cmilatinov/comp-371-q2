@@ -20,10 +20,12 @@ public:
 	GLfloat get_y_change();
 	GLfloat get_buffer_width() { return buffer_width; }
 	bool* get_keys() { return key_state; }
+	bool* get_mouse_buttons() { return mouse_button_state; }
 	GLfloat get_buffer_height() { return buffer_height; }
 	// Check whether the GLFW window should be closed
 	bool should_close() { return glfwWindowShouldClose(main_window); }
 	void swap_buffers() { glfwSwapBuffers(main_window); }
+	GLFWwindow* get_instance() { return main_window;  };
 private:
 	// Store the instance of our GLFW window
 	GLFWwindow* main_window;
@@ -33,6 +35,7 @@ private:
 	GLint buffer_width, buffer_height;
 	// Boolean array containing up to date key press state
 	bool key_state[1024];
+	bool mouse_button_state[8];
 	//
 	GLfloat last_x, last_y;
 	//
@@ -45,7 +48,9 @@ private:
 	// Callback function to be called by GLFW on key press state changes
 	static void handle_keys(GLFWwindow* window, int key, int code, int action, int mode);
 	// Callback function to be called by GLFW on mouse movement state changes
-	static void handle_mouse(GLFWwindow* window, double x_pos, double y_pos);
+	static void handle_mouse_movement(GLFWwindow* window, double x_pos, double y_pos);
+	static void handle_mouse_buttons(GLFWwindow* window, int button, int action, int mods);
+
 };
 
 inline GLfloat Window::get_x_change()

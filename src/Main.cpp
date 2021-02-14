@@ -27,6 +27,9 @@ Camera camera;
 GLfloat delta_time = 0.0f;
 GLfloat last_time = 0.0f;
 
+float y_rotation = 0;
+float x_rotation = 0;
+
 // When debugging, the code will execute from "out/build/x64-Debug/". That last folder will have the name of your configuration.
 // We need to go three levels back to the root directory and into "src" before we can see the "Shaders" folder.
 // The build directory might be different with other IDEs and OS, just add a preprocessor conditional statement for your case when you encounter it.
@@ -102,7 +105,7 @@ void create_shader()
 
 int main()
 {
-	main_window = Window(1024, 1024);
+	main_window = Window(1024, 768);
 	int result = main_window.init();
 
 	if (result == 1)
@@ -132,6 +135,9 @@ int main()
 		delta_time = now - last_time;
 		last_time = now;
 
+		float x_change = main_window.get_x_change();
+		float y_change = main_window.get_y_change();
+
 		// Get user input events
 		glfwPollEvents();
 
@@ -139,7 +145,7 @@ int main()
 		glEnable(GL_DEPTH_TEST);
 
 		camera.key_controls(main_window.get_keys(), delta_time);
-		camera.mouse_controls(main_window.get_x_change(), main_window.get_y_change());
+		camera.mouse_controls(x_change, y_change, main_window.get_mouse_buttons());
 
 		// Clear window
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -156,7 +162,6 @@ int main()
 
 		// Create identity matrix for transformations
 		glm::mat4 model(1.0f);
-
 
 		// TODO: Move this crap into it's own function and implement proper hierarchical modelling for rotations and transforms
 		// DISPLAY S
@@ -190,8 +195,6 @@ int main()
 		mesh_list[0]->render_mesh();
 		// END DISPLAY S
 
-
-
 		model = glm::mat4(1.0f);
 		glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -200,8 +203,15 @@ int main()
 		line2.render();
 		line3.render();
 
+		glm::mat4 view_matrix = camera.calculate_view_matrix();
+
+		if (glfwGetMouseButton(main_window.get_instance(), GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) // move camera down
+		{
+			projection = glm::translate(projection, glm::vec3(x_change*delta_time, y_change*delta_time, 0));
+		}
+
 		glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.calculate_view_matrix()));
+		glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(view_matrix));
 
 		glUseProgram(0);
 

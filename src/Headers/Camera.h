@@ -14,7 +14,7 @@ public:
 	Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLfloat move_speed, GLfloat turn_speed);
 
 	void key_controls(bool* keys, GLfloat delta_time);
-	void mouse_controls(GLfloat x_change, GLfloat y_change);
+	void mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_buttons);
 
 	glm::mat4 calculate_view_matrix();
 
@@ -29,6 +29,9 @@ private:
 
 	GLfloat yaw;
 	GLfloat pitch;
+
+	GLfloat y_rotation = 0;
+	GLfloat x_rotation = 0;
 
 	GLfloat move_speed;
 	GLfloat turn_speed;
