@@ -15,6 +15,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "Line.h"
+#include "Grid.h"
 
 const float to_radians = 3.14159265358979f / 180.0f;
 
@@ -125,6 +126,9 @@ int main()
 	Line line2(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 7.0f),glm::vec3(0.0f, 0.0f, 1.0f));
 	Line line3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(7.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
+	// Creates the grid
+	Grid grid(glm::vec3(0.f, 0.f, 0.f));
+
 	// Loop until window closed
 	while (!main_window.should_close())
 	{
@@ -199,6 +203,9 @@ int main()
 		line.render();
 		line2.render();
 		line3.render();
+
+		// Display the grid
+		grid.render();
 
 		glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.calculate_view_matrix()));

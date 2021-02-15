@@ -17,7 +17,7 @@ find_package(glm CONFIG REQUIRED)
 include_directories(src/Headers)
 
 # Add source to this project's executable.
-add_executable ("PA1" "src/Camera.cpp" "src/Line.cpp" "src/Main.cpp" "src/Mesh.cpp" "src/Shader.cpp" "src/Window.cpp")
+add_executable ("PA1" "src/Camera.cpp" "src/Line.cpp" "src/Main.cpp" "src/Mesh.cpp" "src/Shader.cpp" "src/Window.cpp" "src/Grid.cpp")
 
 target_link_libraries("PA1" PRIVATE glfw GLEW::GLEW glm)
 
