@@ -7,28 +7,29 @@
 
 #include <glfw/glfw3.h>
 
+#include "Window.h"
+
 class Camera
 {
 public:
 	Camera();
-	Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLfloat move_speed, GLfloat turn_speed);
+	Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLfloat move_speed, GLfloat turn_speed, Window* window);
 
 	void key_controls(bool* keys, GLfloat delta_time);
 	void mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_buttons, GLfloat delta_time);
-
-	void set_is_panning(bool is_panning) { this->is_panning = is_panning; }
-	bool get_is_panning() { return is_panning;  }
 
 	GLfloat get_zoom() { return zoom; };
 
 	void zoom_in();
 	void zoom_out();
+	
 
 	glm::mat4 calculate_view_matrix();
-
-	~Camera();
+	glm::mat4 calculate_projection();
 
 private:
+	Window* window;
+
 	glm::vec3 position;
 	glm::vec3 front;
 	glm::vec3 up;
@@ -44,10 +45,15 @@ private:
 	GLfloat move_speed;
 	GLfloat turn_speed;
 
-	bool is_panning = false;
 	GLfloat zoom = 0.0f;
 
+	glm::mat4 default_projection;
+
+	glm::mat4 pan_translation;
+
 	void update();
+
+	const GLfloat DEFAULT_FOV = 45.0f;
 };
 
 inline void Camera::zoom_in() 

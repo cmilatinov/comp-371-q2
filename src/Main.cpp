@@ -18,11 +18,11 @@
 
 const float to_radians = 3.14159265358979f / 180.0f;
 
-Window main_window;
+Window* main_window = nullptr;
+Camera* camera = nullptr;
 
 std::vector<Mesh*> mesh_list;
 Shader app_shader;
-Camera camera;
 
 GLfloat delta_time = 0.0f;
 GLfloat last_time = 0.0f;
@@ -105,8 +105,8 @@ void create_shader()
 
 int main()
 {
-	main_window = Window(1024, 768);
-	int result = main_window.init();
+	main_window = new Window(1024, 768);
+	int result = main_window->init();
 
 	if (result == 1)
 	{
@@ -117,11 +117,9 @@ int main()
 	create_objects();
 	create_shader();
 
-	camera = Camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.2f);
+	camera = new Camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.2f, main_window);
 
 	GLuint uniform_projection = 0, uniform_model = 0, uniform_view = 0;
-
-	glm::mat4 projection = glm::perspective(45.0f * to_radians, main_window.get_buffer_width() / main_window.get_buffer_width(), 0.1f, 100.0f);
 
 	// Creates the X, Y, Z axis lines
 	Line line(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -129,14 +127,16 @@ int main()
 	Line line3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(7.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	// Loop until window closed
-	while (!main_window.should_close())
+	while (!main_window->should_close())
 	{
+		// Calculate delta time to minimize speed differences on faster CPUs
 		GLfloat now = glfwGetTime();
 		delta_time = now - last_time;
 		last_time = now;
 
-		float x_change = main_window.get_x_change();
-		float y_change = main_window.get_y_change();
+		// Store our
+		float x_change = main_window->get_x_change();
+		float y_change = main_window->get_y_change();
 
 		// Get user input events
 		glfwPollEvents();
@@ -144,8 +144,8 @@ int main()
 		// Enable depth in our view space
 		glEnable(GL_DEPTH_TEST);
 
-		camera.key_controls(main_window.get_keys(), delta_time);
-		camera.mouse_controls(x_change, y_change, main_window.get_mouse_buttons(), delta_time);
+		camera->key_controls(main_window->get_keys(), delta_time);
+		camera->mouse_controls(x_change, y_change, main_window->get_mouse_buttons(), delta_time);
 
 		// Clear window
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -203,51 +203,19 @@ int main()
 		line2.render();
 		line3.render();
 
-		glm::mat4 view_matrix = camera.calculate_view_matrix();
-
-		// ====== CAMERA TRANSFORMATIONS ====== //
-		// TODO - MOVE THIS OUT OF THE MAIN LOOP
-
-		// ZOOM
-		if (glfwGetKey(main_window.get_instance(), GLFW_KEY_Z)) 
-		{
-			camera.zoom_in();
-			projection = glm::perspective((45.0f + camera.get_zoom()) * to_radians, main_window.get_buffer_width() / main_window.get_buffer_width(), 0.1f, 100.0f);
-		}
-		// Re-adjust the projection until the camera is fully zoomed out (animation effect)
-		else if (camera.get_zoom() != 0) 
-		{
-				projection = glm::perspective((45.0f + camera.get_zoom()) * to_radians, main_window.get_buffer_width() / main_window.get_buffer_width(), 0.1f, 100.0f);
-				camera.zoom_out();
-		}
-
-		// SCREEN PANNING (Set to MOUSE4)
-		if (glfwGetMouseButton(main_window.get_instance(), GLFW_MOUSE_BUTTON_4) == GLFW_PRESS)
-		{
-			// Set the flag in our camera to prevent normal camera movement
-			camera.set_is_panning(true);
-			projection = glm::translate(projection, glm::vec3(x_change * delta_time, y_change * delta_time, 0));
-		}
-		else {
-			camera.set_is_panning(false);
-		}
-
-		// projection = glm::perspective((45.0f + (camera.get_zoom())) * to_radians, main_window.get_buffer_width() / main_window.get_buffer_width(), 0.1f, 100.0f);
-
-		// Resets perspective if the user previously used blender-style panning function
-		if (glfwGetKey(main_window.get_instance(), GLFW_KEY_HOME)) {
-			projection = glm::perspective(45.0f * to_radians, main_window.get_buffer_width() / main_window.get_buffer_width(), 0.1f, 100.0f);
-		}
-
-		// ====== END CAMERA TRANSFORMATIONS ====== //
+		glm::mat4 view_matrix = camera->calculate_view_matrix();
+		glm::mat4 projection = camera->calculate_projection();
 
 		glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(view_matrix));
 
 		glUseProgram(0);
 
-		main_window.swap_buffers();
+		main_window->swap_buffers();
 	}
+
+	delete camera;
+	delete main_window;
 
 	return 0;
 }
