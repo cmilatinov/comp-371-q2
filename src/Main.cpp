@@ -145,7 +145,7 @@ int main()
 		glEnable(GL_DEPTH_TEST);
 
 		camera.key_controls(main_window.get_keys(), delta_time);
-		camera.mouse_controls(x_change, y_change, main_window.get_mouse_buttons());
+		camera.mouse_controls(x_change, y_change, main_window.get_mouse_buttons(), delta_time);
 
 		// Clear window
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -205,10 +205,41 @@ int main()
 
 		glm::mat4 view_matrix = camera.calculate_view_matrix();
 
-		if (glfwGetMouseButton(main_window.get_instance(), GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) // move camera down
+		// ====== CAMERA TRANSFORMATIONS ====== //
+		// TODO - MOVE THIS OUT OF THE MAIN LOOP
+
+		// ZOOM
+		if (glfwGetKey(main_window.get_instance(), GLFW_KEY_Z)) 
 		{
-			projection = glm::translate(projection, glm::vec3(x_change*delta_time, y_change*delta_time, 0));
+			camera.zoom_in();
+			projection = glm::perspective((45.0f + camera.get_zoom()) * to_radians, main_window.get_buffer_width() / main_window.get_buffer_width(), 0.1f, 100.0f);
 		}
+		// Re-adjust the projection until the camera is fully zoomed out (animation effect)
+		else if (camera.get_zoom() != 0) 
+		{
+				projection = glm::perspective((45.0f + camera.get_zoom()) * to_radians, main_window.get_buffer_width() / main_window.get_buffer_width(), 0.1f, 100.0f);
+				camera.zoom_out();
+		}
+
+		// SCREEN PANNING (Set to MOUSE4)
+		if (glfwGetMouseButton(main_window.get_instance(), GLFW_MOUSE_BUTTON_4) == GLFW_PRESS)
+		{
+			// Set the flag in our camera to prevent normal camera movement
+			camera.set_is_panning(true);
+			projection = glm::translate(projection, glm::vec3(x_change * delta_time, y_change * delta_time, 0));
+		}
+		else {
+			camera.set_is_panning(false);
+		}
+
+		// projection = glm::perspective((45.0f + (camera.get_zoom())) * to_radians, main_window.get_buffer_width() / main_window.get_buffer_width(), 0.1f, 100.0f);
+
+		// Resets perspective if the user previously used blender-style panning function
+		if (glfwGetKey(main_window.get_instance(), GLFW_KEY_HOME)) {
+			projection = glm::perspective(45.0f * to_radians, main_window.get_buffer_width() / main_window.get_buffer_width(), 0.1f, 100.0f);
+		}
+
+		// ====== END CAMERA TRANSFORMATIONS ====== //
 
 		glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(view_matrix));

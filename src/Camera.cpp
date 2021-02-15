@@ -17,26 +17,49 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLf
 
 void Camera::key_controls(bool* keys, GLfloat delta_time)
 {
+	// Slow down movement on faster CPUs
 	GLfloat velocity = move_speed * delta_time;
+	GLfloat modified_speed = move_speed;
+
+	if (keys[GLFW_KEY_LEFT_SHIFT])
+	{
+		// Increase the speed if the user is holding shift
+		modified_speed *= 2;
+	}
+
+	if (keys[GLFW_KEY_LEFT_CONTROL])
+	{
+		position.y -= modified_speed;
+	}
+
+	if (keys[GLFW_KEY_SPACE])
+	{
+		position.y += modified_speed;
+	}
 
 	if (keys[GLFW_KEY_W])
 	{
-		position += front * move_speed;
+		position += front * modified_speed;
+	}
+
+	if (keys[GLFW_KEY_W])
+	{
+		position += front * modified_speed;
 	}
 
 	if (keys[GLFW_KEY_S])
 	{
-		position -= front * move_speed;
+		position -= front * modified_speed;
 	}
 
 	if (keys[GLFW_KEY_A])
 	{
-		position -= right * move_speed;
+		position -= right * modified_speed;
 	}
 
 	if (keys[GLFW_KEY_D])
 	{
-		position += right * move_speed;
+		position += right * modified_speed;
 	}
 	if (keys[GLFW_KEY_UP])
 	{
@@ -67,10 +90,22 @@ void Camera::key_controls(bool* keys, GLfloat delta_time)
 	}
 }
 
-void Camera::mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_buttons)
+void Camera::mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_buttons, GLfloat delta_time)
 {
 	// Disable normal camera controls when the user is panning
-	if (!mouse_buttons[GLFW_MOUSE_BUTTON_MIDDLE])
+	if (is_panning) return;
+
+	if (mouse_buttons[GLFW_MOUSE_BUTTON_MIDDLE])
+	{
+		y_change *= turn_speed;
+		pitch += y_change;
+	}
+	else if (mouse_buttons[GLFW_MOUSE_BUTTON_RIGHT])
+	{
+		x_change *= turn_speed;
+		yaw += x_change;
+	}
+	else
 	{
 		// Adjust the value changes by our speed modifiers
 		x_change *= turn_speed;
@@ -78,19 +113,20 @@ void Camera::mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_butt
 		// Apply changes to our yaw and pitch
 		yaw += x_change;
 		pitch += y_change;
-		// Limit our camera from flipping when looking too far up or down
-		if (pitch > 89.0f)
-		{
-			pitch = 89.0f;
-		}
-
-		if (pitch < -89.0f)
-		{
-			pitch = -89.0f;
-		}
-
-		update();
 	}	
+
+	// Limit our camera from flipping when looking too far up or down
+	if (pitch > 89.0f)
+	{
+		pitch = 89.0f;
+	}
+
+	if (pitch < -89.0f)
+	{
+		pitch = -89.0f;
+	}
+
+	update();
 }
 
 glm::mat4 Camera::calculate_view_matrix()

@@ -22,6 +22,8 @@ public:
 	bool* get_keys() { return key_state; }
 	bool* get_mouse_buttons() { return mouse_button_state; }
 	GLfloat get_buffer_height() { return buffer_height; }
+	GLfloat get_last_x() { return last_x; }
+	GLfloat get_last_y() { return last_y; }
 	// Check whether the GLFW window should be closed
 	bool should_close() { return glfwWindowShouldClose(main_window); }
 	void swap_buffers() { glfwSwapBuffers(main_window); }
