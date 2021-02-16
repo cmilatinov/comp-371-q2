@@ -6,26 +6,29 @@ EntityGroup::EntityGroup() :
 EntityGroup::EntityGroup(const EntityGroup * src) :
     pos(src->pos), rot(src->rot), scaleXYZ(src->scaleXYZ), entities(src->entities), mesh(src->mesh) {}
 
-void EntityGroup::add(const Entity * entity) {
+EntityGroup * EntityGroup::add(const Entity * entity) {
     if (entity == nullptr)
-        return;
+        return this;
 
     // Cannot add entities of different meshes to the same group
     if (mesh != nullptr && entity->get_mesh() != mesh)
-        return;
+        return this;
 
     entities.push_back(entity);
     if (mesh == nullptr)
         mesh = entity->get_mesh();
+
+    return this;
 }
 
-void EntityGroup::remove(const Entity * entity) {
+EntityGroup * EntityGroup::remove(const Entity * entity) {
     for (auto it = entities.begin(); it != entities.end(); ++it) {
         if (*it == entity) {
             entities.erase(it);
-            return;
+            return this;
         }
     }
+    return this;
 }
 
 EntityGroup * EntityGroup::translate(const vec3 & translation) {

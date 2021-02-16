@@ -19,8 +19,8 @@ public:
     EntityGroup();
     EntityGroup(const EntityGroup * src);
 
-    void add(const Entity * entity);
-    void remove(const Entity * entity);
+    EntityGroup * add(const Entity * entity);
+    EntityGroup * remove(const Entity * entity);
 
     EntityGroup * translate(const vec3 & translation);
     EntityGroup * rotate(const vec3 & rotation);

@@ -29,6 +29,8 @@ static const char * fragment_path = "Shaders/shader.frag";
 void create_entities(MeshLoader & loader, EntityManager & entityManager) {
     const Mesh * cube = loader.create_mesh(CUBE_VERTEX_ARRAY, sizeof(CUBE_VERTEX_ARRAY) / sizeof(glm::vec3));
 
+    // LETTER S
+
     Entity * s_1 = (new Entity(cube))
             ->scale(vec3(5, 1, 1));
 
@@ -48,18 +50,96 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
             ->scale(vec3(1, 2, 1))
             ->translate(vec3(-2, 4.5f, 0));
 
-    EntityGroup * letter_s = (new EntityGroup())->translate(vec3(0, 10, 0));
-    letter_s->add(s_1);
-    letter_s->add(s_2);
-    letter_s->add(s_3);
-    letter_s->add(s_4);
-    letter_s->add(s_5);
+    EntityGroup * letter_s = (new EntityGroup())
+            ->translate(vec3(0, 2.5f, 0))
+            ->scale(vec3(0.6f, 1, 1))
+            ->add(s_1)
+            ->add(s_2)
+            ->add(s_3)
+            ->add(s_4)
+            ->add(s_5);
 
-    EntityGroup * letter_s2 = (new EntityGroup(*letter_s))->set_translation(vec3(0, -10, 0));
+    // LETTER C
 
+    Entity * c_1 = (new Entity(cube))
+            ->scale(vec3(0.9f, 5, 1));
+
+    Entity * c_2 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(1.25f, -3, 0));
+
+    Entity * c_3 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(1.25f, 3, 0));
+
+    EntityGroup * letter_c = (new EntityGroup())
+            ->translate(vec3(5, 5.5f, 0))
+            ->add(c_1)
+            ->add(c_2)
+            ->add(c_3);
+
+    // LETTER N
+
+    Entity * n_1 = (new Entity(cube))
+            ->scale(vec3(0.8f, 6, 1))
+            ->translate(vec3(0, -0.5f, 0));
+
+    Entity * n_2 = (new Entity(cube))
+            ->scale(vec3(3, 1, 1))
+            ->translate(vec3(1.5f, 3, 0));
+
+    Entity * n_3 = (new Entity(cube))
+            ->scale(vec3(0.8f, 6, 1))
+            ->translate(vec3(3, -0.5f, 0));
+
+    EntityGroup * letter_n = (new EntityGroup())
+            ->translate(vec3(10, 5.5f, 0))
+            ->add(n_1)
+            ->add(n_2)
+            ->add(n_3);
+
+    // LETTER M
+
+    Entity * m_1 = (new Entity(cube))
+            ->scale(vec3(0.8f, 6, 1))
+            ->translate(vec3(0, -0.5f, 0));
+
+    Entity * m_2 = (new Entity(cube))
+            ->scale(vec3(6, 1, 1))
+            ->translate(vec3(3, 3, 0));
+
+    Entity * m_3 = (new Entity(cube))
+            ->scale(vec3(0.8f, 6, 1))
+            ->translate(vec3(3, -0.5f, 0));
+
+    Entity * m_5 = (new Entity(cube))
+            ->scale(vec3(0.8f, 6, 1))
+            ->translate(vec3(6, -0.5f, 0));
+
+    EntityGroup * letter_m = (new EntityGroup())
+            ->translate(vec3(15, 5.5f, 0))
+            ->add(m_1)
+            ->add(m_2)
+            ->add(m_3)
+            ->add(m_5);
+
+    // LETTER I
+
+    Entity * i_1 = (new Entity(cube))
+        ->scale(vec3(1, 6, 1));
+
+    EntityGroup * letter_i = (new EntityGroup())
+            ->translate(vec3(20, 0, 0));
+    letter_i->add(i_1);
+
+    // Add letter instances
     entityManager.add(letter_s);
-    entityManager.add(letter_s2);
-    
+    entityManager.add(letter_c);
+    entityManager.add(letter_n);
+    entityManager.add(letter_m);
+
+
+
     // TODO add all letters
 }
 
