@@ -29,31 +29,37 @@ static const char * fragment_path = "Shaders/shader.frag";
 void create_entities(MeshLoader & loader, EntityManager & entityManager) {
     const Mesh * cube = loader.create_mesh(CUBE_VERTEX_ARRAY, sizeof(CUBE_VERTEX_ARRAY) / sizeof(glm::vec3));
 
-    const Entity * s_1 = (new Entity(cube))
+    Entity * s_1 = (new Entity(cube))
             ->scale(vec3(5, 1, 1));
 
-    const Entity * s_2 = (new Entity(cube))
+    Entity * s_2 = (new Entity(cube))
             ->scale(vec3(5, 1, 1))
             ->translate(vec3(0, 3, 0));
 
-    const Entity * s_3 = (new Entity(cube))
+    Entity * s_3 = (new Entity(cube))
             ->scale(vec3(5, 1, 1))
             ->translate(vec3(0, 6, 0));
 
-    const Entity * s_4 = (new Entity(cube))
+    Entity * s_4 = (new Entity(cube))
             ->scale(vec3(1, 2, 1))
             ->translate(vec3(2, 1.5f, 0));
 
-    const Entity * s_5 = (new Entity(cube))
+    Entity * s_5 = (new Entity(cube))
             ->scale(vec3(1, 2, 1))
             ->translate(vec3(-2, 4.5f, 0));
 
-    entityManager.add(s_1);
-    entityManager.add(s_2);
-    entityManager.add(s_3);
-    entityManager.add(s_4);
-    entityManager.add(s_5);
+    EntityGroup * letter_s = (new EntityGroup())->translate(vec3(0, 10, 0));
+    letter_s->add(s_1);
+    letter_s->add(s_2);
+    letter_s->add(s_3);
+    letter_s->add(s_4);
+    letter_s->add(s_5);
 
+    EntityGroup * letter_s2 = (new EntityGroup(*letter_s))->set_translation(vec3(0, -10, 0));
+
+    entityManager.add(letter_s);
+    entityManager.add(letter_s2);
+    
     // TODO add all letters
 }
 
@@ -117,8 +123,8 @@ int main() {
 		// Clear window
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Use shader to render lines and grid
-        entityRenderer.render(camera, entityManager.get_entity_map());
+        // Render entities
+        entityRenderer.render(camera, entityManager);
 
 		// Display the axis lines
 		line.render();
