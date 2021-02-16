@@ -118,7 +118,7 @@ int main()
 	create_objects();
 	create_shader();
 
-	camera = new Camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.2f, main_window);
+	camera = new Camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.4f, main_window);
 
 	GLuint uniform_projection = 0, uniform_model = 0, uniform_view = 0;
 

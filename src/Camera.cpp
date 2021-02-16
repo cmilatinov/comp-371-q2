@@ -12,6 +12,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLf
 	this->move_speed = move_speed;
 	this->turn_speed = turn_speed;
 	this->window = window;
+	this->fov = DEFAULT_FOV;
 	this->default_projection = glm::perspective(glm::radians(45.0f), window->get_buffer_width() / window->get_buffer_width(), 0.1f, 100.0f);
 	// Instatiate to an identity matrix to store our transformations later
 	this->pan_translation = glm::mat4(1.0f);
@@ -104,27 +105,35 @@ void Camera::key_controls(bool* keys, GLfloat delta_time)
 		world_up = glm::vec3(0.0f, 1.0f, 0.0f);
 		yaw = -90.0;
 		pitch = 0;
-		zoom = 0;
+		fov = DEFAULT_FOV;
 		pan_translation = glm::mat4(1.0f);
 	}
-	// Z - Zoom in
+	// Z - Reset FOV (Undo zooming)
 	if (keys[GLFW_KEY_Z])
 	{
-		if ((45 + zoom) >= 20) {
-			this->zoom -= 1.0;
-		}
-	}
-	// Re-adjust the projection until the camera is fully zoomed out (animation effect)
-	else if (zoom != 0)
-	{
-		if ((45 - zoom) >= 45) {
-			this->zoom += 1.0;
-		}
+		this->fov = DEFAULT_FOV;
 	}
 }
 
 void Camera::mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_buttons, GLfloat delta_time)
 {
+	// LEFT CLICK - Zoom in and out by dragging up and down
+	if (mouse_buttons[GLFW_MOUSE_BUTTON_LEFT])
+	{
+		fov -= y_change;
+
+		if (fov < MIN_FOV) {
+			fov = MIN_FOV;
+		}
+			
+		if (fov > MAX_FOV) {
+			fov = MAX_FOV;
+		}
+
+
+		return;
+	}
+
 	// MOUSE4 - Screen panning (Blender style)
 	if (mouse_buttons[GLFW_MOUSE_BUTTON_4])
 	{
@@ -192,8 +201,8 @@ glm::mat4 Camera::calculate_view_matrix()
 glm::mat4 Camera::calculate_projection()
 {
 	// If the zoom is not set to zero recalculate the perspective using the modified FOV
-	if (zoom != 0) {
-		return glm::perspective(glm::radians(45.0f + zoom), window->get_buffer_width() / window->get_buffer_width(), 0.1f, 100.0f) * pan_translation;
+	if (fov != DEFAULT_FOV) {
+		return glm::perspective(glm::radians(fov), window->get_buffer_width() / window->get_buffer_width(), 0.1f, 100.0f) * pan_translation;
 	}
 
 	return default_projection * pan_translation;
