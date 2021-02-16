@@ -134,8 +134,9 @@ void Camera::mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_butt
 	// MOUSE4 - Screen panning (Blender style)
 	if (mouse_buttons[GLFW_MOUSE_BUTTON_4])
 	{
-		// Apply our transformations to an identity matrix to be calculated later
+		// Apply our left and right movement
 		position += right * (x_change * delta_time);
+		// Apply our upwards and downwards movement to the axis perpendicular to where our camera is facing
 		position += glm::normalize(glm::cross(right, front)) * (y_change * delta_time);
 
 		update();
