@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 class Camera
 {
@@ -16,7 +16,7 @@ public:
 	void key_controls(bool* keys, GLfloat delta_time);
 	void mouse_controls(GLfloat x_change, GLfloat y_change);
 
-	glm::mat4 calculate_view_matrix();
+	glm::mat4 calculate_view_matrix() const;
 
 	~Camera();
 

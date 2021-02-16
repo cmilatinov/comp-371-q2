@@ -2,15 +2,9 @@
 
 Window::Window() {}
 
-Window::Window(GLint width, GLint height)
-{
+Window::Window(GLint width, GLint height) {
 	this->width = width;
 	this->height = height;
-
-	for (size_t i = 0; i < 1024; i++)
-	{
-		key_state[i] = 0;
-	}
 }
 
 int Window::init()
@@ -75,6 +69,8 @@ int Window::init()
 	glViewport(0, 0, buffer_width, buffer_height);
 
 	glfwSetWindowUserPointer(main_window, this);
+
+	return 0;
 }
 
 void Window::link_callbacks()
