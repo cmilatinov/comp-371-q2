@@ -14,8 +14,6 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLf
 	this->window = window;
 	this->fov = DEFAULT_FOV;
 	this->default_projection = glm::perspective(glm::radians(45.0f), window->get_buffer_width() / window->get_buffer_width(), 0.1f, 100.0f);
-	// Instatiate to an identity matrix to store our transformations later
-	this->pan_translation = glm::mat4(1.0f);
 
 	// Calculate our camera front/right angle coordinates using the defaults
 	update();
@@ -106,7 +104,6 @@ void Camera::key_controls(bool* keys, GLfloat delta_time)
 		yaw = -90.0;
 		pitch = 0;
 		fov = DEFAULT_FOV;
-		pan_translation = glm::mat4(1.0f);
 	}
 	// Z - Reset FOV (Undo zooming)
 	if (keys[GLFW_KEY_Z])
@@ -138,8 +135,10 @@ void Camera::mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_butt
 	if (mouse_buttons[GLFW_MOUSE_BUTTON_4])
 	{
 		// Apply our transformations to an identity matrix to be calculated later
-		pan_translation = glm::translate(pan_translation, glm::vec3(x_change * delta_time, y_change * delta_time, 0));
+		position += right * (x_change * delta_time);
+		position += glm::normalize(glm::cross(right, front)) * (y_change * delta_time);
 
+		update();
 		// Return right to skip freelook camera behavior
 		return;
 	}
@@ -202,10 +201,10 @@ glm::mat4 Camera::calculate_projection()
 {
 	// If the zoom is not set to zero recalculate the perspective using the modified FOV
 	if (fov != DEFAULT_FOV) {
-		return glm::perspective(glm::radians(fov), window->get_buffer_width() / window->get_buffer_width(), 0.1f, 100.0f) * pan_translation;
+		return glm::perspective(glm::radians(fov), window->get_buffer_width() / window->get_buffer_width(), 0.1f, 100.0f);
 	}
 
-	return default_projection * pan_translation;
+	return default_projection;
 }
 
 void Camera::update()

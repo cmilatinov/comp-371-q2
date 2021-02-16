@@ -43,8 +43,6 @@ private:
 
 	glm::mat4 default_projection;
 
-	glm::mat4 pan_translation;
-
 	void update();
 
 	const GLfloat DEFAULT_FOV = 45.0f, MIN_FOV = 10.0F, MAX_FOV = 65.0F;
