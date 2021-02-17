@@ -1,11 +1,7 @@
 #include "Shader.h"
 
-Shader::Shader()
-{
-	shader_ID = 0;
-	uniform_model = 0;
-	uniform_projection = 0;
-	uniform_view = 0;
+Shader::Shader(const char* vertex_file_path, const char* fragment_file_path) {
+    create_from_files(vertex_file_path, fragment_file_path);
 }
 
 void Shader::create_from_files(const char* vertex_file_path, const char* fragment_file_path)
@@ -79,7 +75,7 @@ void Shader::compile(const char* vertex_code, const char* fragment_code)
 	uniform_view = glGetUniformLocation(shader_ID, "view");
 }
 
-void Shader::use_shader()
+void Shader::use_shader() const
 {
 	glUseProgram(shader_ID);
 }

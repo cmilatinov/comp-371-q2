@@ -1,29 +1,16 @@
 #include "Window.h"
 
 Window::Window() {
-	for (size_t i = 0; i < 1024; i++)
-	{
-		if (i < 8) {
-			mouse_button_state[i] = 0;
-		}
-
-		key_state[i] = 0;
-	}
+    for (size_t i = 0; i < 1024; i++) {
+        if (i < 8) {
+            mouse_button_state[i] = 0;
+        }
+    }
 }
 
-Window::Window(GLint width, GLint height)
-{
+Window::Window(GLint width, GLint height) {
 	this->width = width;
 	this->height = height;
-
-	for (size_t i = 0; i < 1024; i++)
-	{
-		if (i < 8) {
-			mouse_button_state[i] = 0;
-		}
-
-		key_state[i] = 0;
-	}
 }
 
 int Window::init()
@@ -88,6 +75,8 @@ int Window::init()
 	glViewport(0, 0, buffer_width, buffer_height);
 
 	glfwSetWindowUserPointer(main_window, this);
+
+	return 0;
 }
 
 void Window::link_callbacks()

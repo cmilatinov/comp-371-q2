@@ -1,21 +1,31 @@
 #pragma once
 
-#include <GL/glew.h>
+#include <vector>
+
+#include <gl/glew.h>
 #include <glm/glm.hpp>
 
-class Mesh
-{
+using std::vector;
+
+class Mesh {
+
 public:
-	Mesh();
+    const GLuint vao, vbo;
+    const GLsizei index_count;
 
-	void create_mesh(glm::vec3* vertices, unsigned int size, unsigned int index_counts);
-	void render_mesh();
-	void clear_mesh();
+public:
+	Mesh(GLuint vao, GLuint vbo, GLsizei index_count);
+    ~Mesh();
 
-	~Mesh();
+	void render_mesh() const;
 
-private:
-	GLuint VAO, VBO;
-	GLsizei index_count;
+	inline GLuint get_vao() const {
+	    return vao;
+	}
+
+    inline GLuint get_vbo() const {
+        return vbo;
+    }
+
 };
 

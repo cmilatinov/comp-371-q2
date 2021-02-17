@@ -366,3 +366,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# CLion build and workspace directories
+cmake-build-debug
+cmake-build-release
+.idea

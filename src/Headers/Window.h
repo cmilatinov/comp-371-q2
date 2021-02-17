@@ -36,8 +36,8 @@ private:
 	// Dimensions of the observable OpenGL view (excluding border/titlebar)
 	GLint buffer_width, buffer_height;
 	// Boolean array containing up to date key press state
-	bool key_state[1024];
-	bool mouse_button_state[8];
+	bool key_state[1024] = { 0 };
+	bool mouse_button_state[8] = { 0 };
 	//
 	GLfloat last_x, last_y;
 	//
