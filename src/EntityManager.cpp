@@ -6,10 +6,8 @@ EntityManager::~EntityManager() {
             delete entity;
         }
     }
-    for (const auto & entry : entityGroups) {
-        for (const EntityGroup * entityGroup : entry.second) {
-            delete entityGroup;
-        }
+    for (const EntityGroup * entityGroup : entityGroups) {
+        delete entityGroup;
     }
 }
 
@@ -35,7 +33,7 @@ void EntityManager::remove(const Entity * entity) {
 void EntityManager::add(const EntityGroup * entityGroup) {
     if (entityGroup == nullptr)
         return;
-    entityGroups[entityGroup->get_mesh()].push_back(entityGroup);
+    entityGroups.push_back(entityGroup);
     for (const Entity * entity : entityGroup->get_entities())
         addToCleanup(entity);
 }
@@ -43,10 +41,9 @@ void EntityManager::add(const EntityGroup * entityGroup) {
 void EntityManager::remove(const EntityGroup * entityGroup) {
     if (entityGroup == nullptr)
         return;
-    const Mesh * mesh = entityGroup->get_mesh();
-    for (auto it = entityGroups[mesh].begin(); it != entityGroups[mesh].end(); ++it) {
+    for (auto it = entityGroups.begin(); it != entityGroups.end(); ++it) {
         if (*it == entityGroup) {
-            entityGroups[mesh].erase(it);
+            entityGroups.erase(it);
             return;
         }
     }

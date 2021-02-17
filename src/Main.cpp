@@ -33,23 +33,23 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
 
     Entity * s_1 = (new Entity(cube))
             ->scale(vec3(2.5f, 1, 1))
-            ->translate(vec3(0, 2.5f, 0));
+            ->translate(vec3(2, 2.5f, 0));
 
     Entity * s_2 = (new Entity(cube))
             ->scale(vec3(2.5f, 1, 1))
-            ->translate(vec3(0, 5.5f, 0));
+            ->translate(vec3(2, 5.5f, 0));
 
     Entity * s_3 = (new Entity(cube))
             ->scale(vec3(2.5f, 1, 1))
-            ->translate(vec3(0, 8.5f, 0));
+            ->translate(vec3(2, 8.5f, 0));
 
     Entity * s_4 = (new Entity(cube))
             ->scale(vec3(0.6f, 2, 1))
-            ->translate(vec3(1.25f, 4, 0));
+            ->translate(vec3(3.25f, 4, 0));
 
     Entity * s_5 = (new Entity(cube))
             ->scale(vec3(0.6f, 2, 1))
-            ->translate(vec3(-1.25f, 7, 0));
+            ->translate(vec3(0.75f, 7, 0));
 
     EntityGroup * letter_s = (new EntityGroup())
             ->add(s_1)
@@ -82,18 +82,18 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
 
     Entity * n_1 = (new Entity(cube))
             ->scale(vec3(0.7f, 6, 1))
-            ->translate(vec3(0, -0.5f, 0));
+            ->translate(vec3(0, 5, 0));
 
     Entity * n_2 = (new Entity(cube))
             ->scale(vec3(3, 1, 1))
-            ->translate(vec3(1.5f, 3, 0));
+            ->translate(vec3(1.5f, 8.5f, 0));
 
     Entity * n_3 = (new Entity(cube))
             ->scale(vec3(0.7f, 6, 1))
-            ->translate(vec3(3, -0.5f, 0));
+            ->translate(vec3(3, 5, 0));
 
     EntityGroup * letter_n = (new EntityGroup())
-            ->translate(vec3(10, 5.5f, 0))
+            ->translate(vec3(10, 0, 0))
             ->add(n_1)
             ->add(n_2)
             ->add(n_3);
@@ -102,22 +102,22 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
 
     Entity * m_1 = (new Entity(cube))
             ->scale(vec3(0.7f, 6, 1))
-            ->translate(vec3(0, -0.5f, 0));
+            ->translate(vec3(0, 5, 0));
 
     Entity * m_2 = (new Entity(cube))
             ->scale(vec3(6, 1, 1))
-            ->translate(vec3(3, 3, 0));
+            ->translate(vec3(3, 8.5f, 0));
 
     Entity * m_3 = (new Entity(cube))
             ->scale(vec3(0.7f, 6, 1))
-            ->translate(vec3(3, -0.5f, 0));
+            ->translate(vec3(3, 5, 0));
 
     Entity * m_5 = (new Entity(cube))
             ->scale(vec3(0.7f, 6, 1))
-            ->translate(vec3(6, -0.5f, 0));
+            ->translate(vec3(6, 5, 0));
 
     EntityGroup * letter_m = (new EntityGroup())
-            ->translate(vec3(16, 5.5f, 0))
+            ->translate(vec3(16, 0, 0))
             ->add(m_1)
             ->add(m_2)
             ->add(m_3)
@@ -268,17 +268,55 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
             ->add(nb8_6)
             ->add(nb8_7);
 
-    // Add letter instances
-    entityManager.add(letter_s);
-    entityManager.add(letter_c);
-    entityManager.add(letter_n);
-    entityManager.add(letter_m);
-    entityManager.add(letter_i);
-    entityManager.add(number_2);
-    entityManager.add(number_4);
-    entityManager.add(number_6);
-    entityManager.add(number_7);
-    entityManager.add(number_8);
+    EntityGroup * cristian = (new EntityGroup())
+            ->translate(vec3(-8, 0, 0))
+            ->add((new EntityGroup(letter_c))->translate(vec3(0.5f, 0, 0)))
+            ->add((new EntityGroup(letter_n))->translate(vec3(4.25f, 0, 0)))
+            ->add((new EntityGroup(number_4))->translate(vec3(10, 0, 0)))
+            ->add((new EntityGroup(number_7))->translate(vec3(12.5f, 0, 0)));
+    EntityGroup * mahdi = (new EntityGroup())
+            ->translate(vec3(-8.75f, 0, 0))
+            ->add((new EntityGroup(letter_m))->translate(vec3(0.5f, 0, 0)))
+            ->add((new EntityGroup(letter_i))->translate(vec3(8.5f, 0, 0)))
+            ->add((new EntityGroup(number_2))->translate(vec3(11.5f, 0, 0)))
+            ->add((new EntityGroup(number_6))->translate(vec3(14.5f, 0, 0)));
+    EntityGroup * steven = (new EntityGroup())
+            ->translate(vec3(-8.25f, 0, 0))
+            ->add((new EntityGroup(letter_s))->translate(vec3(0, 0, 0)))
+            ->add((new EntityGroup(letter_n))->translate(vec3(4.5f, 0, 0)))
+            ->add((new EntityGroup(number_4))->translate(vec3(10, 0, 0)))
+            ->add((new EntityGroup(number_8))->translate(vec3(12.5f, 0, 0)));
+    EntityGroup * steven2 = (new EntityGroup())
+            ->translate(vec3(-8.25f, 0, 0))
+            ->add((new EntityGroup(letter_s))->translate(vec3(0, 0, 0)))
+            ->add((new EntityGroup(letter_n))->translate(vec3(4.5f, 0, 0)))
+            ->add((new EntityGroup(number_4))->translate(vec3(10, 0, 0)))
+            ->add((new EntityGroup(number_8))->translate(vec3(12.5f, 0, 0)));
+
+
+    EntityGroup * cristianPosition = (new EntityGroup())
+            ->translate(vec3(0, 0, -64))
+            ->add(cristian);
+    EntityGroup * mahdiPosition = (new EntityGroup())
+            ->translate(vec3(64, 0, 0))
+            ->rotate(vec3(0, -90, 0))
+            ->add(mahdi);
+    EntityGroup * stevenPosition = (new EntityGroup())
+            ->translate(vec3(0, 0, 64))
+            ->rotate(vec3(0, -180, 0))
+            ->add(steven);
+    EntityGroup * steven2Position = (new EntityGroup())
+            ->translate(vec3(-64, 0, 0))
+            ->rotate(vec3(0, -270, 0))
+            ->add(steven2);
+
+    // Add names
+    entityManager.add(cristianPosition);
+    entityManager.add(mahdiPosition);
+    entityManager.add(stevenPosition);
+    entityManager.add(steven2Position);
+    entityManager.add(mahdi);
+
 }
 
 
@@ -343,6 +381,8 @@ int main() {
 
         // Render entities
         entityRenderer.render(camera, entityManager);
+
+        glUniformMatrix4fv(app_shader.get_model_location(), 1, GL_FALSE, glm::value_ptr(mat4(1.0f)));
 
 		// Display the axis lines
 		line.render();

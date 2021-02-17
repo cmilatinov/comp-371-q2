@@ -1,10 +1,23 @@
 #include "EntityGroup.h"
 
 EntityGroup::EntityGroup() :
-    pos(0, 0, 0), rot(0, 0, 0), scaleXYZ(1, 1, 1){}
+        pos(0, 0, 0),
+        rot(0, 0, 0),
+        scaleXYZ(1, 1, 1) {}
 
 EntityGroup::EntityGroup(const EntityGroup * src) :
-    pos(src->pos), rot(src->rot), scaleXYZ(src->scaleXYZ), entities(src->entities), mesh(src->mesh) {}
+        pos(0, 0, 0),
+        rot(0, 0, 0),
+        scaleXYZ(1, 1, 1),
+        entities(src->entities),
+        mesh(src->mesh),
+        childrenGroups(src->childrenGroups) {}
+
+EntityGroup::~EntityGroup() {
+    for (const EntityGroup * group : childrenGroups) {
+        delete group;
+    }
+}
 
 EntityGroup * EntityGroup::add(const Entity * entity) {
     if (entity == nullptr)
@@ -21,10 +34,27 @@ EntityGroup * EntityGroup::add(const Entity * entity) {
     return this;
 }
 
+
+EntityGroup * EntityGroup::add(const EntityGroup * group) {
+    childrenGroups.push_back(group);
+    return this;
+}
+
+
 EntityGroup * EntityGroup::remove(const Entity * entity) {
     for (auto it = entities.begin(); it != entities.end(); ++it) {
         if (*it == entity) {
             entities.erase(it);
+            return this;
+        }
+    }
+    return this;
+}
+
+EntityGroup * EntityGroup::remove(const EntityGroup * group) {
+    for (auto it = childrenGroups.begin(); it != childrenGroups.end(); ++it) {
+        if (*it == group) {
+            childrenGroups.erase(it);
             return this;
         }
     }
