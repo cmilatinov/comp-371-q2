@@ -279,10 +279,6 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
     entityManager.add(number_6);
     entityManager.add(number_7);
     entityManager.add(number_8);
-
-
-
-    // TODO add all letters
 }
 
 
