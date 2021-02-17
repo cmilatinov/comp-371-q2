@@ -19,14 +19,17 @@
 
 const float to_radians = 3.14159265358979f / 180.0f;
 
-Window main_window;
+Window* main_window = nullptr;
+Camera* camera = nullptr;
 
 std::vector<Mesh*> mesh_list;
 Shader app_shader;
-Camera camera;
 
 GLfloat delta_time = 0.0f;
 GLfloat last_time = 0.0f;
+
+float y_rotation = 0;
+float x_rotation = 0;
 
 // When debugging, the code will execute from "out/build/x64-Debug/". That last folder will have the name of your configuration.
 // We need to go three levels back to the root directory and into "src" before we can see the "Shaders" folder.
@@ -103,8 +106,8 @@ void create_shader()
 
 int main()
 {
-	main_window = Window(1024, 1024);
-	int result = main_window.init();
+	main_window = new Window(1024, 768);
+	int result = main_window->init();
 
 	if (result == 1)
 	{
@@ -115,11 +118,9 @@ int main()
 	create_objects();
 	create_shader();
 
-	camera = Camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.2f);
+	camera = new Camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.4f, main_window);
 
 	GLuint uniform_projection = 0, uniform_model = 0, uniform_view = 0;
-
-	glm::mat4 projection = glm::perspective(45.0f * to_radians, main_window.get_buffer_width() / main_window.get_buffer_width(), 0.1f, 100.0f);
 
 	// Creates the X, Y, Z axis lines
 	Line line(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -130,11 +131,16 @@ int main()
 	Grid grid(glm::vec3(0.f, 0.f, 0.f));
 
 	// Loop until window closed
-	while (!main_window.should_close())
+	while (!main_window->should_close())
 	{
+		// Calculate delta time to minimize speed differences on faster CPUs
 		GLfloat now = glfwGetTime();
 		delta_time = now - last_time;
 		last_time = now;
+
+		// Store our
+		float x_change = main_window->get_x_change();
+		float y_change = main_window->get_y_change();
 
 		// Get user input events
 		glfwPollEvents();
@@ -142,8 +148,8 @@ int main()
 		// Enable depth in our view space
 		glEnable(GL_DEPTH_TEST);
 
-		camera.key_controls(main_window.get_keys(), delta_time);
-		camera.mouse_controls(main_window.get_x_change(), main_window.get_y_change());
+		camera->key_controls(main_window->get_keys(), delta_time);
+		camera->mouse_controls(x_change, y_change, main_window->get_mouse_buttons(), delta_time);
 
 		// Clear window
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -160,7 +166,6 @@ int main()
 
 		// Create identity matrix for transformations
 		glm::mat4 model(1.0f);
-
 
 		// TODO: Move this crap into it's own function and implement proper hierarchical modelling for rotations and transforms
 		// DISPLAY S
@@ -194,8 +199,6 @@ int main()
 		mesh_list[0]->render_mesh();
 		// END DISPLAY S
 
-
-
 		model = glm::mat4(1.0f);
 		glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -207,13 +210,19 @@ int main()
 		// Display the grid
 		grid.render();
 
+		glm::mat4 view_matrix = camera->calculate_view_matrix();
+		glm::mat4 projection = camera->calculate_projection();
+
 		glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.calculate_view_matrix()));
+		glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(view_matrix));
 
 		glUseProgram(0);
 
-		main_window.swap_buffers();
+		main_window->swap_buffers();
 	}
+
+	delete camera;
+	delete main_window;
 
 	return 0;
 }
