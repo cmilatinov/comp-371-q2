@@ -32,27 +32,26 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
     // LETTER S
 
     Entity * s_1 = (new Entity(cube))
-            ->scale(vec3(5, 1, 1));
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(0, 2.5f, 0));
 
     Entity * s_2 = (new Entity(cube))
-            ->scale(vec3(5, 1, 1))
-            ->translate(vec3(0, 3, 0));
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(0, 5.5f, 0));
 
     Entity * s_3 = (new Entity(cube))
-            ->scale(vec3(5, 1, 1))
-            ->translate(vec3(0, 6, 0));
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(0, 8.5f, 0));
 
     Entity * s_4 = (new Entity(cube))
-            ->scale(vec3(1, 2, 1))
-            ->translate(vec3(2, 1.5f, 0));
+            ->scale(vec3(0.6f, 2, 1))
+            ->translate(vec3(1.25f, 4, 0));
 
     Entity * s_5 = (new Entity(cube))
-            ->scale(vec3(1, 2, 1))
-            ->translate(vec3(-2, 4.5f, 0));
+            ->scale(vec3(0.6f, 2, 1))
+            ->translate(vec3(-1.25f, 7, 0));
 
     EntityGroup * letter_s = (new EntityGroup())
-            ->translate(vec3(0, 2.5f, 0))
-            ->scale(vec3(0.6f, 1, 1))
             ->add(s_1)
             ->add(s_2)
             ->add(s_3)
@@ -62,18 +61,19 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
     // LETTER C
 
     Entity * c_1 = (new Entity(cube))
-            ->scale(vec3(0.9f, 5, 1));
+            ->scale(vec3(0.7f, 5, 1))
+            ->translate(vec3(0, 5.5f, 0));
 
     Entity * c_2 = (new Entity(cube))
             ->scale(vec3(2.5f, 1, 1))
-            ->translate(vec3(1.25f, -3, 0));
+            ->translate(vec3(1.25f, 2.5f, 0));
 
     Entity * c_3 = (new Entity(cube))
             ->scale(vec3(2.5f, 1, 1))
-            ->translate(vec3(1.25f, 3, 0));
+            ->translate(vec3(1.25f, 8.5f, 0));
 
     EntityGroup * letter_c = (new EntityGroup())
-            ->translate(vec3(5, 5.5f, 0))
+            ->translate(vec3(5, 0, 0))
             ->add(c_1)
             ->add(c_2)
             ->add(c_3);
@@ -81,7 +81,7 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
     // LETTER N
 
     Entity * n_1 = (new Entity(cube))
-            ->scale(vec3(0.8f, 6, 1))
+            ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(0, -0.5f, 0));
 
     Entity * n_2 = (new Entity(cube))
@@ -89,7 +89,7 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
             ->translate(vec3(1.5f, 3, 0));
 
     Entity * n_3 = (new Entity(cube))
-            ->scale(vec3(0.8f, 6, 1))
+            ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(3, -0.5f, 0));
 
     EntityGroup * letter_n = (new EntityGroup())
@@ -101,7 +101,7 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
     // LETTER M
 
     Entity * m_1 = (new Entity(cube))
-            ->scale(vec3(0.8f, 6, 1))
+            ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(0, -0.5f, 0));
 
     Entity * m_2 = (new Entity(cube))
@@ -109,15 +109,15 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
             ->translate(vec3(3, 3, 0));
 
     Entity * m_3 = (new Entity(cube))
-            ->scale(vec3(0.8f, 6, 1))
+            ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(3, -0.5f, 0));
 
     Entity * m_5 = (new Entity(cube))
-            ->scale(vec3(0.8f, 6, 1))
+            ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(6, -0.5f, 0));
 
     EntityGroup * letter_m = (new EntityGroup())
-            ->translate(vec3(15, 5.5f, 0))
+            ->translate(vec3(16, 5.5f, 0))
             ->add(m_1)
             ->add(m_2)
             ->add(m_3)
@@ -126,17 +126,159 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
     // LETTER I
 
     Entity * i_1 = (new Entity(cube))
-        ->scale(vec3(1, 6, 1));
+        ->scale(vec3(0.7f, 7, 1))
+        ->translate(vec3(0, 5.5f, 0));
 
     EntityGroup * letter_i = (new EntityGroup())
-            ->translate(vec3(20, 0, 0));
-    letter_i->add(i_1);
+            ->translate(vec3(25, 0, 0))
+            ->add(i_1);
+
+
+    // Number 2 4 6 7 8
+
+    // NUMBER 2
+    Entity * nb2_1 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(0, 2.5f, 0));
+
+    Entity * nb2_2 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(0, 5.5f, 0));
+
+    Entity * nb2_3 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(0, 8.5f, 0));
+
+    Entity * nb2_4 = (new Entity(cube))
+            ->scale(vec3(0.6f, 2, 1))
+            ->translate(vec3(1.25f, 7, 0));
+
+    Entity * nb2_5 = (new Entity(cube))
+            ->scale(vec3(0.6f, 2, 1))
+            ->translate(vec3(-1.25f, 4, 0));
+
+    EntityGroup * number_2 = (new EntityGroup())
+            ->translate(vec3(30, 0, 0))
+            ->add(nb2_1)
+            ->add(nb2_2)
+            ->add(nb2_3)
+            ->add(nb2_4)
+            ->add(nb2_5);
+
+    // NUMBER 4
+    Entity * nb4_1 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(0, 5.5f, 0));
+
+
+    Entity * nb4_3 = (new Entity(cube))
+            ->scale(vec3(0.6f, 7, 1))
+            ->translate(vec3(1.25f, 5.5f, 0));
+
+    Entity * nb4_4 = (new Entity(cube))
+            ->scale(vec3(0.6f, 3.5f, 1))
+            ->translate(vec3(-1.25f, 7.25f, 0));
+
+    EntityGroup * number_4 = (new EntityGroup())
+            ->translate(vec3(35, 0, 0))
+            ->add(nb4_1)
+            ->add(nb4_3)
+            ->add(nb4_4);
+
+    // NUMBER 6
+    Entity * nb6_1 = (new Entity(cube))
+            ->scale(vec3(0.7f, 5, 1))
+            ->translate(vec3(0, 5.5f, 0));
+
+    Entity * nb6_2 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(1.25f, 2.5f, 0));
+
+    Entity * nb6_3 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(1.25f, 5.5f, 0));
+
+    Entity * nb6_4 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(1.25f, 8.5f, 0));
+
+    Entity * nb6_5 = (new Entity(cube))
+            ->scale(vec3(0.6f, 2, 1))
+            ->translate(vec3(2.5f, 4, 0));
+
+    EntityGroup * number_6 = (new EntityGroup())
+            ->translate(vec3(40, 0, 0))
+            ->add(nb6_1)
+            ->add(nb6_2)
+            ->add(nb6_3)
+            ->add(nb6_4)
+            ->add(nb6_5);
+
+    // NUMBER 7
+    Entity * nb7_1 = (new Entity(cube))
+            ->scale(vec3(0.6f, 6.5f, 1))
+            ->translate(vec3(1.5f, 5, 0))
+            ->rotate(vec3(0, 0, -20));
+
+    Entity * nb7_2 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(1.25f, 8.5f, 0));
+
+    EntityGroup * number_7 = (new EntityGroup())
+            ->translate(vec3(45, 0, 0))
+            ->add(nb7_1)
+            ->add(nb7_2);
+
+    // NUMBER 8
+    Entity * nb8_1 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(1.25f, 2.5f, 0));
+
+    Entity * nb8_2 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(1.25f, 5.5f, 0));
+
+    Entity * nb8_3 = (new Entity(cube))
+            ->scale(vec3(2.5f, 1, 1))
+            ->translate(vec3(1.25f, 8.5f, 0));
+
+    Entity * nb8_4 = (new Entity(cube))
+            ->scale(vec3(0.6f, 2, 1))
+            ->translate(vec3(2.5f, 4, 0));
+
+    Entity * nb8_5 = (new Entity(cube))
+            ->scale(vec3(0.6f, 2, 1))
+            ->translate(vec3(2.5f, 7, 0));
+
+    Entity * nb8_6 = (new Entity(cube))
+            ->scale(vec3(0.6f, 2, 1))
+            ->translate(vec3(0, 4, 0));
+
+    Entity * nb8_7 = (new Entity(cube))
+            ->scale(vec3(0.6f, 2, 1))
+            ->translate(vec3(0, 7, 0));
+
+    EntityGroup * number_8 = (new EntityGroup())
+            ->translate(vec3(50, 0, 0))
+            ->add(nb8_1)
+            ->add(nb8_2)
+            ->add(nb8_3)
+            ->add(nb8_4)
+            ->add(nb8_5)
+            ->add(nb8_6)
+            ->add(nb8_7);
 
     // Add letter instances
     entityManager.add(letter_s);
     entityManager.add(letter_c);
     entityManager.add(letter_n);
     entityManager.add(letter_m);
+    entityManager.add(letter_i);
+    entityManager.add(number_2);
+    entityManager.add(number_4);
+    entityManager.add(number_6);
+    entityManager.add(number_7);
+    entityManager.add(number_8);
 
 
 
