@@ -286,7 +286,7 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
                 ->translate(vec3(12.5f, 0, 0.5f))
                 ->rotate(vec3(0, -20, 0))
             );
-    
+
     EntityGroup * mahdi = (new EntityGroup())
             ->translate(vec3(-8.75f, 0, 0))
             ->add((new EntityGroup(letter_m, false))
@@ -440,6 +440,10 @@ int main() {
 
     // Enable depth in our view space
     glEnable(GL_DEPTH_TEST);
+
+    // Hide surfaces facing away from camera
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
 
     // Set clear color to white
     glClearColor(1, 1, 1, 1);
