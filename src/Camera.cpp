@@ -110,30 +110,44 @@ void Camera::key_controls(bool* keys, GLfloat delta_time, EntityGroup* const sel
 	{
 		this->fov = DEFAULT_FOV;
 	}
+	
+	// Model transformation below \\
 
+	// SCALE
 	if (keys[GLFW_KEY_I])
 	{
-		selectedModel->rotate(glm::vec3(5.f, 0.f, 0.f));
+		selectedModel->scale(glm::vec3(1.f, 1.f, 1.f));
 	}
 	else if (keys[GLFW_KEY_K])
 	{
-
+		selectedModel->scale(glm::vec3(-1.f, -1.f, -1.f));
 	}
-	else if (keys[GLFW_KEY_Y])
+	// MOVE FORWARD/BACKWARD
+	if (keys[GLFW_KEY_Y])
 	{
-
-	}
-	else if (keys[GLFW_KEY_G])
-	{
-
+		selectedModel->translate(glm::vec3(0.f, 0.f, .25f));
 	}
 	else if (keys[GLFW_KEY_H])
 	{
-
+		selectedModel->translate(glm::vec3(0.f, 0.f, -.25f));
+	}
+	// MOVE LEFT/RIGHT
+	if (keys[GLFW_KEY_G])
+	{
+		selectedModel->translate(glm::vec3(.25f, 0.f, 0.f));
 	}
 	else if (keys[GLFW_KEY_J])
 	{
-
+		selectedModel->translate(glm::vec3(-.25f, 0.f, 0.f));
+	}
+	// ROTATE LEFT/RIGHT
+	if (keys[GLFW_KEY_B])
+	{
+		selectedModel->rotate(glm::vec3(0.f, .25f, 0.f));
+	}
+	else if (keys[GLFW_KEY_N])
+	{
+		selectedModel->rotate(glm::vec3(0.f, -.25f, 0.f));
 	}
 }
 

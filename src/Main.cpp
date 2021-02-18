@@ -381,11 +381,11 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
             ->rotate(vec3(0, 315, 0))
             ->add(steven2);
 
-    groups[0] = mahdi;
-    groups[1] = cristianPosition;
-    groups[2] = mahdiPosition;
-    groups[3] = stevenPosition;
-    groups[4] = steven2Position;
+    groups[0] = mahdi2;
+    groups[1] = cristian;
+    groups[2] = mahdi;
+    groups[3] = steven;
+    groups[4] = steven2;
 
     // Add names
     entityManager.add(cristianPosition);
