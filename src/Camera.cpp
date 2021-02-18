@@ -158,6 +158,12 @@ void Camera::key_controls(bool* keys, GLfloat delta_time, EntityGroup* const sel
 	{
 		selectedModel->rotate(glm::vec3(0.f, -.5f, 0.f));
 	}
+	// [ - Toggle cursor lock
+	if (keys[GLFW_KEY_LEFT_BRACKET])
+	{
+		glfwSetInputMode(window->get_instance(), GLFW_CURSOR, cursor_enabled ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+		cursor_enabled = !cursor_enabled;
+	}
 }
 
 void Camera::mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_buttons, GLfloat delta_time)

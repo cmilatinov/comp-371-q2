@@ -42,6 +42,8 @@ private:
 
 	GLfloat fov;
 
+	bool cursor_enabled = false;
+
 	glm::mat4 default_projection;
 
 	void update();
