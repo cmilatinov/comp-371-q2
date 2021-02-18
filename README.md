@@ -50,3 +50,4 @@
 - `Mouse Button 4` will make mouse movements move the camera only along its `x-axis` and `y-axis` plane.
 - `Middle Mouse Button` will make all vertical mouse movements change the camera's pitch.
 - `Left Mouse Button` will make all horizontal mouse movements change the camera's yaw.
+- `[` will unlock the mouse cursor from the window.
