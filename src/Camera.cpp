@@ -255,7 +255,7 @@ glm::mat4 Camera::calculate_projection()
 {
 	// If the zoom is not set to zero recalculate the perspective using the modified FOV
 	if (fov != DEFAULT_FOV) {
-		return glm::perspective(glm::radians(fov), window->get_buffer_width() / window->get_buffer_width(), 0.1f, 100.0f);
+		return glm::perspective(glm::radians(fov), window->get_buffer_width() / window->get_buffer_width(), 0.1f, 1000.0f);
 	}
 
 	return default_projection;
