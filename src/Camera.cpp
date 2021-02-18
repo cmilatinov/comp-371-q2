@@ -13,7 +13,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLf
 	this->turn_speed = turn_speed;
 	this->window = window;
 	this->fov = DEFAULT_FOV;
-	this->default_projection = glm::perspective(glm::radians(45.0f), window->get_buffer_width() / window->get_buffer_width(), 0.1f, 100.0f);
+	this->default_projection = glm::perspective(glm::radians(45.0f), window->get_buffer_width() / window->get_buffer_width(), 0.1f, 1000.0f);
 
 	// Calculate our camera front/right angle coordinates using the defaults
 	update();
@@ -151,7 +151,6 @@ void Camera::mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_butt
 		if (fov > MAX_FOV) {
 			fov = MAX_FOV;
 		}
-
 
 		return;
 	}

@@ -270,44 +270,115 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
 
     EntityGroup * cristian = (new EntityGroup())
             ->translate(vec3(-8, 0, 0))
-            ->add((new EntityGroup(letter_c))->translate(vec3(0.5f, 0, 0)))
-            ->add((new EntityGroup(letter_n))->translate(vec3(4.25f, 0, 0)))
-            ->add((new EntityGroup(number_4))->translate(vec3(10, 0, 0)))
-            ->add((new EntityGroup(number_7))->translate(vec3(12.5f, 0, 0)));
+            ->add((new EntityGroup(letter_c, false))
+                ->translate(vec3(0.5f, 0, 1.2f))
+                ->rotate(vec3(0, 20, 0))
+            )
+            ->add((new EntityGroup(letter_n, false))
+                ->translate(vec3(4.25f, 0, 0))
+                ->rotate(vec3(0, 10, 0))
+            )
+            ->add((new EntityGroup(number_4, false))
+                ->translate(vec3(10, 0, -0.2f))
+                ->rotate(vec3(0, -10, 0))
+            )
+            ->add((new EntityGroup(number_7, false))
+                ->translate(vec3(12.5f, 0, 0.5f))
+                ->rotate(vec3(0, -20, 0))
+            );
+
     EntityGroup * mahdi = (new EntityGroup())
             ->translate(vec3(-8.75f, 0, 0))
-            ->add((new EntityGroup(letter_m))->translate(vec3(0.5f, 0, 0)))
-            ->add((new EntityGroup(letter_i))->translate(vec3(8.5f, 0, 0)))
-            ->add((new EntityGroup(number_2))->translate(vec3(11.5f, 0, 0)))
-            ->add((new EntityGroup(number_6))->translate(vec3(14.5f, 0, 0)));
+            ->add((new EntityGroup(letter_m, false))
+                ->translate(vec3(0.5f, 0, 2.6f))
+                ->rotate(vec3(0, 20, 0))
+            )
+            ->add((new EntityGroup(letter_i, false))
+                ->translate(vec3(8.5f, 0, 0))
+                ->rotate(vec3(0, 10, 0))
+            )
+            ->add((new EntityGroup(number_2, false))
+                ->translate(vec3(11.5f, 0, 0.2f))
+                ->rotate(vec3(0, -10, 0))
+            )
+            ->add((new EntityGroup(number_6, false))
+                ->translate(vec3(14.5f, 0, 1))
+                ->rotate(vec3(0, -20, 0))
+            );
+
+    EntityGroup * mahdi2 = (new EntityGroup())
+            ->translate(vec3(-8.75f, 0, 0))
+            ->add((new EntityGroup(letter_m, false))
+                ->translate(vec3(0.5f, 0, 3.5f))
+                ->rotate(vec3(0, 30, 0))
+            )
+            ->add((new EntityGroup(letter_i, false))
+                ->translate(vec3(8.5f, 0, 0))
+                ->rotate(vec3(0, 10, 0))
+            )
+            ->add((new EntityGroup(number_2, false))
+                ->translate(vec3(11.5f, 0, 0))
+                ->rotate(vec3(0, -10, 0))
+            )
+            ->add((new EntityGroup(number_6, false))
+                ->translate(vec3(14.5f, 0, 1))
+                ->rotate(vec3(0, -25, 0))
+            );
+
     EntityGroup * steven = (new EntityGroup())
             ->translate(vec3(-8.25f, 0, 0))
-            ->add((new EntityGroup(letter_s))->translate(vec3(0, 0, 0)))
-            ->add((new EntityGroup(letter_n))->translate(vec3(4.5f, 0, 0)))
-            ->add((new EntityGroup(number_4))->translate(vec3(10, 0, 0)))
-            ->add((new EntityGroup(number_8))->translate(vec3(12.5f, 0, 0)));
+            ->add((new EntityGroup(letter_s, false))
+                ->translate(vec3(0, 0, 1.5f))
+                ->rotate(vec3(0, 20, 0))
+            )
+            ->add((new EntityGroup(letter_n, false))
+                ->translate(vec3(4.5f, 0, 0))
+                ->rotate(vec3(0, 10, 0))
+            )
+            ->add((new EntityGroup(number_4, false))
+                ->translate(vec3(10, 0, -0.4f))
+                ->rotate(vec3(0, -8, 0))
+            )
+            ->add((new EntityGroup(number_8, false))
+                ->translate(vec3(12.5f, 0, 0.1f))
+                ->rotate(vec3(0, -20, 0))
+            );
+
     EntityGroup * steven2 = (new EntityGroup())
             ->translate(vec3(-8.25f, 0, 0))
-            ->add((new EntityGroup(letter_s))->translate(vec3(0, 0, 0)))
-            ->add((new EntityGroup(letter_n))->translate(vec3(4.5f, 0, 0)))
-            ->add((new EntityGroup(number_4))->translate(vec3(10, 0, 0)))
-            ->add((new EntityGroup(number_8))->translate(vec3(12.5f, 0, 0)));
+            ->add((new EntityGroup(letter_s, false))
+                          ->translate(vec3(0, 0, 1.5f))
+                          ->rotate(vec3(0, 20, 0))
+            )
+            ->add((new EntityGroup(letter_n, false))
+                          ->translate(vec3(4.5f, 0, 0))
+                          ->rotate(vec3(0, 10, 0))
+            )
+            ->add((new EntityGroup(number_4, false))
+                          ->translate(vec3(10, 0, -0.4f))
+                          ->rotate(vec3(0, -8, 0))
+            )
+            ->add((new EntityGroup(number_8, false))
+                          ->translate(vec3(12.5f, 0, 0.1f))
+                          ->rotate(vec3(0, -20, 0))
+            );
 
 
     EntityGroup * cristianPosition = (new EntityGroup())
-            ->translate(vec3(0, 0, -64))
+            ->translate(vec3(-64, 0, -64))
+            ->rotate(vec3(0, 45, 0))
             ->add(cristian);
     EntityGroup * mahdiPosition = (new EntityGroup())
-            ->translate(vec3(64, 0, 0))
-            ->rotate(vec3(0, -90, 0))
+            ->translate(vec3(-64, 0, 64))
+            ->rotate(vec3(0, 135, 0))
             ->add(mahdi);
     EntityGroup * stevenPosition = (new EntityGroup())
-            ->translate(vec3(0, 0, 64))
-            ->rotate(vec3(0, -180, 0))
+            ->translate(vec3(64, 0, 64))
+            ->rotate(vec3(0, 225, 0))
             ->add(steven);
     EntityGroup * steven2Position = (new EntityGroup())
-            ->translate(vec3(-64, 0, 0))
-            ->rotate(vec3(0, -270, 0))
+            ->translate(vec3(64, 0, -64))
+            ->rotate(vec3(0, 315, 0))
             ->add(steven2);
 
     groups[0] = mahdi;
@@ -321,29 +392,39 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
     entityManager.add(mahdiPosition);
     entityManager.add(stevenPosition);
     entityManager.add(steven2Position);
-    entityManager.add(mahdi);
+    entityManager.add(mahdi2);
+
+    delete letter_c;
+    delete letter_i;
+    delete letter_m;
+    delete letter_n;
+    delete letter_s;
+    delete number_2;
+    delete number_4;
+    delete number_6;
+    delete number_7;
+    delete number_8;
 
 }
 
 
 int main() {
     // Window creation
-    Window main_window(1920, 1080);
+    Window main_window(1024, 768);
 	int result = main_window.init();
 	if (result == 1) {
 		// Error creating the GLFW window so terminate early
 		return 1;
 	}
 
+    // Creates the camera, used as an abstraction to calculate the view matrix
+    Camera camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.2f, &main_window);
+
     // Load shader program
 	Shader app_shader(vertex_path, fragment_path);
-    // Load perspective matrix only ONCE, will not change later for now
-    // This part should actually be in the camera
-    // it should create a single pre-multiplied projection-view matrix
-    // because it allows us to change the camera's FOV if needed later
-    mat4 projection = glm::perspective(45.0f * to_radians, main_window.get_buffer_width() / main_window.get_buffer_width(), 0.1f, 1000.0f);
-    app_shader.use_shader();
-	glUniformMatrix4fv(app_shader.get_projection_location(), 1, GL_FALSE, glm::value_ptr(projection));
+
+    // Use the loaded shader
+    app_shader.use_shader();	
 
 	// Init entity renderer and manager, create necessary entities
 	EntityRenderer entityRenderer(app_shader);
@@ -363,9 +444,6 @@ int main() {
     // The window's key states
     bool* keys{ main_window.get_keys() };
 
-    // Creates the camera, used as an abstraction to calculate the view matrix
-    Camera camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.2f, &main_window);
-
 	// Creates the X, Y, Z axis lines
 	Line line(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	Line line2(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 7.0f),glm::vec3(0.0f, 0.0f, 1.0f));
@@ -380,6 +458,10 @@ int main() {
     // So we can actually see the points in Point polygon mode
     glPointSize(3.f);
 
+    // Hide surfaces facing away from camera
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+
     // Set clear color to white
     glClearColor(1, 1, 1, 1);
 
@@ -391,6 +473,7 @@ int main() {
 		GLfloat now = glfwGetTime();
         GLfloat delta_time = now - last_time;
 		last_time = now;
+
 		
 		// Get user input events
 		glfwPollEvents();
@@ -425,6 +508,7 @@ int main() {
         // Render entities
         entityRenderer.render(camera, entityManager);
 
+        glUniformMatrix4fv(app_shader.get_projection_location(), 1, GL_FALSE, glm::value_ptr(camera.calculate_projection()));
         glUniformMatrix4fv(app_shader.get_model_location(), 1, GL_FALSE, glm::value_ptr(mat4(1.0f)));
 
 		// Display the axis lines

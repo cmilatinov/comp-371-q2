@@ -5,13 +5,16 @@ EntityGroup::EntityGroup() :
         rot(0, 0, 0),
         scaleXYZ(1, 1, 1) {}
 
-EntityGroup::EntityGroup(const EntityGroup * src) :
-        pos(0, 0, 0),
-        rot(0, 0, 0),
-        scaleXYZ(1, 1, 1),
+EntityGroup::EntityGroup(const EntityGroup * src, bool copyTransform) :
+        pos(copyTransform ? src->pos : vec3(0, 0, 0)),
+        rot(copyTransform ? src->rot : vec3(0, 0, 0)),
+        scaleXYZ(copyTransform ? src->scaleXYZ : vec3(1, 1, 1)),
         entities(src->entities),
-        mesh(src->mesh),
-        childrenGroups(src->childrenGroups) {}
+        mesh(src->mesh) {
+    for (const EntityGroup * group : src->childrenGroups) {
+        childrenGroups.push_back(new EntityGroup(group, true));
+    }
+}
 
 EntityGroup::~EntityGroup() {
     for (const EntityGroup * group : childrenGroups) {
