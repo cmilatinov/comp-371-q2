@@ -29,7 +29,7 @@ int Window::init()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	// Core Profile = No backwards compatibility
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 	// Allow forward compatability
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
@@ -106,6 +106,20 @@ void Window::handle_keys(GLFWwindow* window, int key, int code, int action, int 
 		{
 			window_instance->key_state[key] = false;
 		}
+	}
+
+	// Chose the polygon mode for rendering
+	if (window_instance->key_state[GLFW_KEY_L])
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else if (window_instance->key_state[GLFW_KEY_P])
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+	}
+	else if (window_instance->key_state[GLFW_KEY_T])
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
 

@@ -26,7 +26,7 @@ static const char * vertex_path = "Shaders/shader.vert";
 // Fragment Shader file path
 static const char * fragment_path = "Shaders/shader.frag";
 
-void create_entities(MeshLoader & loader, EntityManager & entityManager) {
+void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityGroup ** groups) {
     const Mesh * cube = loader.create_mesh(CUBE_VERTEX_ARRAY, sizeof(CUBE_VERTEX_ARRAY) / sizeof(glm::vec3));
 
     // LETTER S
@@ -372,6 +372,8 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
             ->translate(vec3(-64, 0, 64))
             ->rotate(vec3(0, 135, 0))
             ->add(mahdi);
+    EntityGroup * mahdi2Position = (new EntityGroup())
+            ->add(mahdi2);
     EntityGroup * stevenPosition = (new EntityGroup())
             ->translate(vec3(64, 0, 64))
             ->rotate(vec3(0, 225, 0))
@@ -381,12 +383,18 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
             ->rotate(vec3(0, 315, 0))
             ->add(steven2);
 
+    groups[0] = mahdi2Position;
+    groups[1] = cristianPosition;
+    groups[2] = mahdiPosition;
+    groups[3] = stevenPosition;
+    groups[4] = steven2Position;
+
     // Add names
     entityManager.add(cristianPosition);
     entityManager.add(mahdiPosition);
     entityManager.add(stevenPosition);
     entityManager.add(steven2Position);
-    entityManager.add(mahdi2);
+    entityManager.add(mahdi2Position);
 
     delete letter_c;
     delete letter_i;
@@ -424,7 +432,19 @@ int main() {
 	EntityRenderer entityRenderer(app_shader);
 	EntityManager entityManager;
     MeshLoader loader;
-    create_entities(loader, entityManager);
+
+    // The array of models
+    EntityGroup * models[5];
+    // The selected model
+    EntityGroup* selectedModel;
+
+    create_entities(loader, entityManager, models);
+
+    // The default selected model
+    selectedModel = models[0];
+
+    // The window's key states
+    bool* keys{ main_window.get_keys() };
 
 	// Creates the X, Y, Z axis lines
 	Line line(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -436,6 +456,9 @@ int main() {
 
     // Enable depth in our view space
     glEnable(GL_DEPTH_TEST);
+    
+    // So we can actually see the points in Point polygon mode
+    glPointSize(3.f);
 
     // Hide surfaces facing away from camera
     glCullFace(GL_BACK);
@@ -457,7 +480,28 @@ int main() {
 		// Get user input events
 		glfwPollEvents();
 
-		camera.key_controls(main_window.get_keys(), delta_time);
+        if (keys[GLFW_KEY_1])
+        {
+            selectedModel = models[0];
+        }
+        else if (keys[GLFW_KEY_2])
+        {
+            selectedModel = models[1];
+        }
+        else if (keys[GLFW_KEY_3])
+        {
+            selectedModel = models[2];
+        }
+        else if (keys[GLFW_KEY_4])
+        {
+            selectedModel = models[3];
+        }
+        else if (keys[GLFW_KEY_5])
+        {
+            selectedModel = models[4];
+        }
+
+		camera.key_controls(main_window.get_keys(), delta_time, selectedModel);
 		camera.mouse_controls(main_window.get_x_change(), main_window.get_y_change(), main_window.get_mouse_buttons(), delta_time);
 
 		// Clear window

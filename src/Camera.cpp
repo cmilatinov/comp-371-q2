@@ -19,7 +19,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLf
 	update();
 }
 
-void Camera::key_controls(bool* keys, GLfloat delta_time)
+void Camera::key_controls(bool* keys, GLfloat delta_time, EntityGroup* const selectedModel)
 {
 	// Slow down movement on faster CPUs
 	GLfloat velocity = move_speed * delta_time;
@@ -109,6 +109,60 @@ void Camera::key_controls(bool* keys, GLfloat delta_time)
 	if (keys[GLFW_KEY_Z])
 	{
 		this->fov = DEFAULT_FOV;
+	}
+	
+	// Model transformation below \\
+
+	// SCALE
+	if (keys[GLFW_KEY_I])
+	{
+		selectedModel->scale(1.01f);
+	}
+	else if (keys[GLFW_KEY_K])
+	{
+		selectedModel->scale(0.99);
+	}
+	// MOVE FORWARD/BACKWARD
+	if (keys[GLFW_KEY_Y])
+	{
+		selectedModel->translate(glm::vec3(.25f, 0.f, 0.f));
+	}
+	else if (keys[GLFW_KEY_H])
+	{
+		selectedModel->translate(glm::vec3(-.25f, 0.f, 0.f));
+	}
+	// MOVE LEFT/RIGHT
+	if (keys[GLFW_KEY_G])
+	{
+		selectedModel->translate(glm::vec3(0.f, 0.f, .25f));
+	}
+	else if (keys[GLFW_KEY_J])
+	{
+		selectedModel->translate(glm::vec3(0.f, 0.f, -.25f));
+	}
+	// MOVE UP/DOWN
+	if (keys[GLFW_KEY_F])
+	{
+		selectedModel->translate(glm::vec3(0.f, .25f, 0.f));
+	}
+	else if (keys[GLFW_KEY_V])
+	{
+		selectedModel->translate(glm::vec3(0.f, -.25f, 0.f));
+	}
+	// ROTATE LEFT/RIGHT
+	if (keys[GLFW_KEY_B])
+	{
+		selectedModel->rotate(glm::vec3(0.f, .5f, 0.f));
+	}
+	else if (keys[GLFW_KEY_N])
+	{
+		selectedModel->rotate(glm::vec3(0.f, -.5f, 0.f));
+	}
+	// [ - Toggle cursor lock
+	if (keys[GLFW_KEY_LEFT_BRACKET])
+	{
+		glfwSetInputMode(window->get_instance(), GLFW_CURSOR, cursor_enabled ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+		cursor_enabled = !cursor_enabled;
 	}
 }
 

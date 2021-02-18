@@ -8,6 +8,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Window.h"
+#include "EntityGroup.h"
 
 class Camera
 {
@@ -15,7 +16,7 @@ public:
 	Camera();
 	Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLfloat move_speed, GLfloat turn_speed, Window* window);
 
-	void key_controls(bool* keys, GLfloat delta_time);
+	void key_controls(bool* keys, GLfloat delta_time, EntityGroup* const selectedModel);
 	void mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_buttons, GLfloat delta_time);	
 
 	glm::mat4 calculate_view_matrix() const;
@@ -40,6 +41,8 @@ private:
 	GLfloat turn_speed;
 
 	GLfloat fov;
+
+	bool cursor_enabled = false;
 
 	glm::mat4 default_projection;
 
