@@ -270,44 +270,115 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
 
     EntityGroup * cristian = (new EntityGroup())
             ->translate(vec3(-8, 0, 0))
-            ->add((new EntityGroup(letter_c))->translate(vec3(0.5f, 0, 0)))
-            ->add((new EntityGroup(letter_n))->translate(vec3(4.25f, 0, 0)))
-            ->add((new EntityGroup(number_4))->translate(vec3(10, 0, 0)))
-            ->add((new EntityGroup(number_7))->translate(vec3(12.5f, 0, 0)));
+            ->add((new EntityGroup(letter_c, false))
+                ->translate(vec3(0.5f, 0, 1.2f))
+                ->rotate(vec3(0, 20, 0))
+            )
+            ->add((new EntityGroup(letter_n, false))
+                ->translate(vec3(4.25f, 0, 0))
+                ->rotate(vec3(0, 10, 0))
+            )
+            ->add((new EntityGroup(number_4, false))
+                ->translate(vec3(10, 0, -0.2f))
+                ->rotate(vec3(0, -10, 0))
+            )
+            ->add((new EntityGroup(number_7, false))
+                ->translate(vec3(12.5f, 0, 0.5f))
+                ->rotate(vec3(0, -20, 0))
+            );
+    
     EntityGroup * mahdi = (new EntityGroup())
             ->translate(vec3(-8.75f, 0, 0))
-            ->add((new EntityGroup(letter_m))->translate(vec3(0.5f, 0, 0)))
-            ->add((new EntityGroup(letter_i))->translate(vec3(8.5f, 0, 0)))
-            ->add((new EntityGroup(number_2))->translate(vec3(11.5f, 0, 0)))
-            ->add((new EntityGroup(number_6))->translate(vec3(14.5f, 0, 0)));
+            ->add((new EntityGroup(letter_m, false))
+                ->translate(vec3(0.5f, 0, 2.6f))
+                ->rotate(vec3(0, 20, 0))
+            )
+            ->add((new EntityGroup(letter_i, false))
+                ->translate(vec3(8.5f, 0, 0))
+                ->rotate(vec3(0, 10, 0))
+            )
+            ->add((new EntityGroup(number_2, false))
+                ->translate(vec3(11.5f, 0, 0.2f))
+                ->rotate(vec3(0, -10, 0))
+            )
+            ->add((new EntityGroup(number_6, false))
+                ->translate(vec3(14.5f, 0, 1))
+                ->rotate(vec3(0, -20, 0))
+            );
+
+    EntityGroup * mahdi2 = (new EntityGroup())
+            ->translate(vec3(-8.75f, 0, 0))
+            ->add((new EntityGroup(letter_m, false))
+                ->translate(vec3(0.5f, 0, 3.5f))
+                ->rotate(vec3(0, 30, 0))
+            )
+            ->add((new EntityGroup(letter_i, false))
+                ->translate(vec3(8.5f, 0, 0))
+                ->rotate(vec3(0, 10, 0))
+            )
+            ->add((new EntityGroup(number_2, false))
+                ->translate(vec3(11.5f, 0, 0))
+                ->rotate(vec3(0, -10, 0))
+            )
+            ->add((new EntityGroup(number_6, false))
+                ->translate(vec3(14.5f, 0, 1))
+                ->rotate(vec3(0, -25, 0))
+            );
+
     EntityGroup * steven = (new EntityGroup())
             ->translate(vec3(-8.25f, 0, 0))
-            ->add((new EntityGroup(letter_s))->translate(vec3(0, 0, 0)))
-            ->add((new EntityGroup(letter_n))->translate(vec3(4.5f, 0, 0)))
-            ->add((new EntityGroup(number_4))->translate(vec3(10, 0, 0)))
-            ->add((new EntityGroup(number_8))->translate(vec3(12.5f, 0, 0)));
+            ->add((new EntityGroup(letter_s, false))
+                ->translate(vec3(0, 0, 1.5f))
+                ->rotate(vec3(0, 20, 0))
+            )
+            ->add((new EntityGroup(letter_n, false))
+                ->translate(vec3(4.5f, 0, 0))
+                ->rotate(vec3(0, 10, 0))
+            )
+            ->add((new EntityGroup(number_4, false))
+                ->translate(vec3(10, 0, -0.4f))
+                ->rotate(vec3(0, -8, 0))
+            )
+            ->add((new EntityGroup(number_8, false))
+                ->translate(vec3(12.5f, 0, 0.1f))
+                ->rotate(vec3(0, -20, 0))
+            );
+
     EntityGroup * steven2 = (new EntityGroup())
             ->translate(vec3(-8.25f, 0, 0))
-            ->add((new EntityGroup(letter_s))->translate(vec3(0, 0, 0)))
-            ->add((new EntityGroup(letter_n))->translate(vec3(4.5f, 0, 0)))
-            ->add((new EntityGroup(number_4))->translate(vec3(10, 0, 0)))
-            ->add((new EntityGroup(number_8))->translate(vec3(12.5f, 0, 0)));
+            ->add((new EntityGroup(letter_s, false))
+                          ->translate(vec3(0, 0, 1.5f))
+                          ->rotate(vec3(0, 20, 0))
+            )
+            ->add((new EntityGroup(letter_n, false))
+                          ->translate(vec3(4.5f, 0, 0))
+                          ->rotate(vec3(0, 10, 0))
+            )
+            ->add((new EntityGroup(number_4, false))
+                          ->translate(vec3(10, 0, -0.4f))
+                          ->rotate(vec3(0, -8, 0))
+            )
+            ->add((new EntityGroup(number_8, false))
+                          ->translate(vec3(12.5f, 0, 0.1f))
+                          ->rotate(vec3(0, -20, 0))
+            );
 
 
     EntityGroup * cristianPosition = (new EntityGroup())
-            ->translate(vec3(0, 0, -64))
+            ->translate(vec3(-64, 0, -64))
+            ->rotate(vec3(0, 45, 0))
             ->add(cristian);
     EntityGroup * mahdiPosition = (new EntityGroup())
-            ->translate(vec3(64, 0, 0))
-            ->rotate(vec3(0, -90, 0))
+            ->translate(vec3(-64, 0, 64))
+            ->rotate(vec3(0, 135, 0))
             ->add(mahdi);
     EntityGroup * stevenPosition = (new EntityGroup())
-            ->translate(vec3(0, 0, 64))
-            ->rotate(vec3(0, -180, 0))
+            ->translate(vec3(64, 0, 64))
+            ->rotate(vec3(0, 225, 0))
             ->add(steven);
     EntityGroup * steven2Position = (new EntityGroup())
-            ->translate(vec3(-64, 0, 0))
-            ->rotate(vec3(0, -270, 0))
+            ->translate(vec3(64, 0, -64))
+            ->rotate(vec3(0, 315, 0))
             ->add(steven2);
 
     // Add names
@@ -315,7 +386,18 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
     entityManager.add(mahdiPosition);
     entityManager.add(stevenPosition);
     entityManager.add(steven2Position);
-    entityManager.add(mahdi);
+    entityManager.add(mahdi2);
+
+    delete letter_c;
+    delete letter_i;
+    delete letter_m;
+    delete letter_n;
+    delete letter_s;
+    delete number_2;
+    delete number_4;
+    delete number_6;
+    delete number_7;
+    delete number_8;
 
 }
 

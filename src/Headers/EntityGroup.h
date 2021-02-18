@@ -19,7 +19,7 @@ private:
 public:
     EntityGroup();
     ~EntityGroup();
-    explicit EntityGroup(const EntityGroup * src);
+    explicit EntityGroup(const EntityGroup * src, bool copyTransform);
 
     EntityGroup * add(const Entity * entity);
     EntityGroup * add(const EntityGroup * group);
