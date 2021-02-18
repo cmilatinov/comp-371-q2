@@ -19,7 +19,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLf
 	update();
 }
 
-void Camera::key_controls(bool* keys, GLfloat delta_time)
+void Camera::key_controls(bool* keys, GLfloat delta_time, EntityGroup* const selectedModel)
 {
 	// Slow down movement on faster CPUs
 	GLfloat velocity = move_speed * delta_time;
@@ -109,6 +109,31 @@ void Camera::key_controls(bool* keys, GLfloat delta_time)
 	if (keys[GLFW_KEY_Z])
 	{
 		this->fov = DEFAULT_FOV;
+	}
+
+	if (keys[GLFW_KEY_I])
+	{
+		selectedModel->rotate(glm::vec3(5.f, 0.f, 0.f));
+	}
+	else if (keys[GLFW_KEY_K])
+	{
+
+	}
+	else if (keys[GLFW_KEY_Y])
+	{
+
+	}
+	else if (keys[GLFW_KEY_G])
+	{
+
+	}
+	else if (keys[GLFW_KEY_H])
+	{
+
+	}
+	else if (keys[GLFW_KEY_J])
+	{
+
 	}
 }
 
