@@ -74,7 +74,7 @@ EntityGroup * EntityGroup::rotate(const vec3 & rotation) {
     return this;
 }
 
-EntityGroup * EntityGroup::scale(const vec3 & scale) {
+EntityGroup * EntityGroup:: scale(const vec3 & scale) {
     scaleXYZ *= scale;
     return this;
 }

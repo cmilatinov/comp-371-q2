@@ -372,6 +372,8 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
             ->translate(vec3(-64, 0, 64))
             ->rotate(vec3(0, 135, 0))
             ->add(mahdi);
+    EntityGroup * mahdi2Position = (new EntityGroup())
+            ->add(mahdi2);
     EntityGroup * stevenPosition = (new EntityGroup())
             ->translate(vec3(64, 0, 64))
             ->rotate(vec3(0, 225, 0))
@@ -381,18 +383,18 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
             ->rotate(vec3(0, 315, 0))
             ->add(steven2);
 
-    groups[0] = mahdi2;
-    groups[1] = cristian;
-    groups[2] = mahdi;
-    groups[3] = steven;
-    groups[4] = steven2;
+    groups[0] = mahdi2Position;
+    groups[1] = cristianPosition;
+    groups[2] = mahdiPosition;
+    groups[3] = stevenPosition;
+    groups[4] = steven2Position;
 
     // Add names
     entityManager.add(cristianPosition);
     entityManager.add(mahdiPosition);
     entityManager.add(stevenPosition);
     entityManager.add(steven2Position);
-    entityManager.add(mahdi2);
+    entityManager.add(mahdi2Position);
 
     delete letter_c;
     delete letter_i;
