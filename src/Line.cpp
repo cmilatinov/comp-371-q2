@@ -34,10 +34,11 @@ Line::Line(glm::vec3 start, glm::vec3 end, glm::vec3 color)
 
 void Line::render()
 {
-    glBindVertexArray(VAO);
     glLineWidth(3.0f);
+    glBindVertexArray(VAO);
     glDrawArrays(GL_LINES, 0, 2);
     glBindVertexArray(0);
+    glLineWidth(1.0f);
 }
 
 Line::~Line()
