@@ -107,6 +107,20 @@ void Window::handle_keys(GLFWwindow* window, int key, int code, int action, int 
 			window_instance->key_state[key] = false;
 		}
 	}
+
+	// Chose the polygon mode for rendering
+	if (window_instance->key_state[GLFW_KEY_L])
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else if (window_instance->key_state[GLFW_KEY_P])
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+	}
+	else if (window_instance->key_state[GLFW_KEY_T])
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
 
 void Window::handle_mouse_movement(GLFWwindow* window, double x_pos, double y_pos)
