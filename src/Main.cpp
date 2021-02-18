@@ -404,31 +404,27 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager) {
 
 int main() {
     // Window creation
-    Window main_window(1920, 1080);
+    Window main_window(1024, 768);
 	int result = main_window.init();
 	if (result == 1) {
 		// Error creating the GLFW window so terminate early
 		return 1;
 	}
 
+    // Creates the camera, used as an abstraction to calculate the view matrix
+    Camera camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.2f, &main_window);
+
     // Load shader program
 	Shader app_shader(vertex_path, fragment_path);
-    // Load perspective matrix only ONCE, will not change later for now
-    // This part should actually be in the camera
-    // it should create a single pre-multiplied projection-view matrix
-    // because it allows us to change the camera's FOV if needed later
-    mat4 projection = glm::perspective(45.0f * to_radians, main_window.get_buffer_width() / main_window.get_buffer_width(), 0.1f, 1000.0f);
-    app_shader.use_shader();
-	glUniformMatrix4fv(app_shader.get_projection_location(), 1, GL_FALSE, glm::value_ptr(projection));
+
+    // Use the loaded shader
+    app_shader.use_shader();	
 
 	// Init entity renderer and manager, create necessary entities
 	EntityRenderer entityRenderer(app_shader);
 	EntityManager entityManager;
     MeshLoader loader;
     create_entities(loader, entityManager);
-
-    // Creates the camera, used as an abstraction to calculate the view matrix
-    Camera camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.2f);
 
 	// Creates the X, Y, Z axis lines
 	Line line(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -452,15 +448,17 @@ int main() {
     GLfloat last_time = 0;
 	while (!main_window.should_close())
 	{
+		// Calculate delta time to minimize speed differences on faster CPUs
 		GLfloat now = glfwGetTime();
         GLfloat delta_time = now - last_time;
 		last_time = now;
 
+		
 		// Get user input events
 		glfwPollEvents();
 
 		camera.key_controls(main_window.get_keys(), delta_time);
-		camera.mouse_controls(main_window.get_x_change(), main_window.get_y_change());
+		camera.mouse_controls(main_window.get_x_change(), main_window.get_y_change(), main_window.get_mouse_buttons(), delta_time);
 
 		// Clear window
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -468,6 +466,7 @@ int main() {
         // Render entities
         entityRenderer.render(camera, entityManager);
 
+        glUniformMatrix4fv(app_shader.get_projection_location(), 1, GL_FALSE, glm::value_ptr(camera.calculate_projection()));
         glUniformMatrix4fv(app_shader.get_model_location(), 1, GL_FALSE, glm::value_ptr(mat4(1.0f)));
 
 		// Display the axis lines

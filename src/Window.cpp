@@ -1,6 +1,12 @@
 #include "Window.h"
 
-Window::Window() {}
+Window::Window() {
+    for (size_t i = 0; i < 1024; i++) {
+        if (i < 8) {
+            mouse_button_state[i] = 0;
+        }
+    }
+}
 
 Window::Window(GLint width, GLint height) {
 	this->width = width;
@@ -76,7 +82,8 @@ int Window::init()
 void Window::link_callbacks()
 {
 	glfwSetKeyCallback(main_window, handle_keys);
-	glfwSetCursorPosCallback(main_window, handle_mouse);
+	glfwSetCursorPosCallback(main_window, handle_mouse_movement);
+	glfwSetMouseButtonCallback(main_window, handle_mouse_buttons);
 }
 
 void Window::handle_keys(GLFWwindow* window, int key, int code, int action, int mode)
@@ -102,7 +109,7 @@ void Window::handle_keys(GLFWwindow* window, int key, int code, int action, int 
 	}
 }
 
-void Window::handle_mouse(GLFWwindow* window, double x_pos, double y_pos)
+void Window::handle_mouse_movement(GLFWwindow* window, double x_pos, double y_pos)
 {
 	// Our Window class callback function is static so we cast to get an instance of our class
 	Window* window_instance = static_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -120,7 +127,25 @@ void Window::handle_mouse(GLFWwindow* window, double x_pos, double y_pos)
 	window_instance->last_x = x_pos;
 	window_instance->last_y = y_pos;
 
-	// printf("X: %.6f Y: %.6f\n", theWindow->xChange, theWindow->yChange);
+	// printf("X: %.6f Y: %.6f\n", window_instance->get_x_change(), window_instance->get_y_change());
+}
+
+void Window::handle_mouse_buttons(GLFWwindow* window, int button, int action, int mods)
+{
+	// Our Window class callback function is static so we cast to get an instance of our class
+	Window* window_instance = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+	if (button >= 0 && button < 8)
+	{
+		if (action == GLFW_PRESS)
+		{
+			window_instance->mouse_button_state[button] = true;
+		}
+		else if (action == GLFW_RELEASE)
+		{
+			window_instance->mouse_button_state[button] = false;
+		}
+	}
 }
 
 Window::~Window()
