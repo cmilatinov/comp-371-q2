@@ -16,6 +16,7 @@ void EntityRenderer::render(const Camera & camera, const map<const Mesh *, vecto
         glBindVertexArray(mesh->get_vao());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
 
         // This for-loop can easily be instanced to reduce it to one render call
         for (const Entity * entity : entry.second) {
@@ -27,6 +28,7 @@ void EntityRenderer::render(const Camera & camera, const map<const Mesh *, vecto
         // Disable attributes
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
 
     }
 
@@ -62,6 +64,7 @@ void EntityRenderer::render(const mat4 & parentTransform, const EntityGroup * gr
         glBindVertexArray(mesh->get_vao());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
 
         for (const Entity * entity : groupEntities) {
             // Load model matrix then render
@@ -73,6 +76,7 @@ void EntityRenderer::render(const mat4 & parentTransform, const EntityGroup * gr
         // Disable attributes
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
     }
 
     // Render children groups, applying this groups transform to them

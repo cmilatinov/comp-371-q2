@@ -13,6 +13,8 @@
 #include "EntityRenderer.h"
 #include "EntityManager.h"
 #include "Cube.h"
+#include "Light.h"
+#include "Material.h"
 
 #define PI 3.14159265358979f
 
@@ -426,7 +428,13 @@ int main() {
 	Shader app_shader(vertex_path, fragment_path);
 
     // Use the loaded shader
-    app_shader.use_shader();	
+    app_shader.use_shader();
+
+    // Light
+    Light main_light(glm::vec3(1.0f, 1.0f, 1.0f), 0.1f, glm::vec3(10.0f, 5.0f, 2.0f), 0.3f);
+
+    // TODO Remove this eventually, this should be customizable for each entity group/mesh
+    Material shiny_material(0.5f, 32);
 
 	// Init entity renderer and manager, create necessary entities
 	EntityRenderer entityRenderer(app_shader);
@@ -465,7 +473,7 @@ int main() {
     glEnable(GL_CULL_FACE);
 
     // Set clear color to white
-    glClearColor(1, 1, 1, 1);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
 	// Loop until window closed
     GLfloat last_time = 0;
@@ -507,11 +515,23 @@ int main() {
 		// Clear window
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        main_light.use_light(
+                app_shader.get_ambient_intensity_location(),
+                app_shader.get_ambient_color_location(),
+                app_shader.get_diffuse_intensity_location(),
+                app_shader.get_direction_location());
+
+        shiny_material.use_material(app_shader.get_specular_intensity_location(), app_shader.get_shininess_location());
+
         // Render entities
         entityRenderer.render(camera, entityManager);
 
         glUniformMatrix4fv(app_shader.get_projection_location(), 1, GL_FALSE, glm::value_ptr(camera.calculate_projection()));
         glUniformMatrix4fv(app_shader.get_model_location(), 1, GL_FALSE, glm::value_ptr(mat4(1.0f)));
+        glUniform3f(app_shader.get_eye_position_location(),
+                    camera.get_camera_position().x,
+                    camera.get_camera_position().y,
+                    camera.get_camera_position().z);
 
 		// Display the axis lines
 		line.render();

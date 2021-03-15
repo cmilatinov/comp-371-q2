@@ -23,7 +23,7 @@ const Mesh * MeshLoader::create_mesh(const vec3 * vertices, GLsizei vertex_count
                           3,						// Size
                           GL_FLOAT,				    // Type
                           GL_FALSE,				    // Normalized
-                          2 * sizeof(glm::vec3),	// Stride - each vertex contain 2 vec3 (position, color)
+                          3 * sizeof(glm::vec3),	// Stride - each vertex contain 2 vec3 (position, color)
                           reinterpret_cast<void*>(0)// Array buffer offset
     );
 
@@ -32,8 +32,17 @@ const Mesh * MeshLoader::create_mesh(const vec3 * vertices, GLsizei vertex_count
                           3,						// Size
                           GL_FLOAT,				    // Type
                           GL_FALSE,				    // Normalized
-                          2 * sizeof(glm::vec3),	// Stride - each vertex contain 2 vec3 (position, color)
-                          (void*)sizeof(glm::vec3)  // color is offset by the size of a vec3 (comes after position)
+                          3 * sizeof(glm::vec3),	// Stride - each vertex contain 2 vec3 (position, color)
+                          (void*)(sizeof(glm::vec3) * 2)  // color is offset by the size of a vec3 (comes after position)
+    );
+
+    // Vertex normals
+    glVertexAttribPointer(2,	                    // Attribute 2 = Vertex normal
+                          3,						// Size
+                          GL_FLOAT,				    // Type
+                          GL_FALSE,				    // Normalized
+                          3 * sizeof(glm::vec3),	// Stride - each vertex contain 2 vec3 (position, color)
+                          (void*)sizeof(glm::vec3)  // Array buffer offset
     );
 
     // Unbind VAO

@@ -73,6 +73,13 @@ void Shader::compile(const char* vertex_code, const char* fragment_code)
 	uniform_projection = glGetUniformLocation(shader_ID, "projection");
 	uniform_model = glGetUniformLocation(shader_ID, "model");
 	uniform_view = glGetUniformLocation(shader_ID, "view");
+    uniform_ambient_color = glGetUniformLocation(shader_ID, "directional_light.color");
+    uniform_ambient_intensity = glGetUniformLocation(shader_ID, "directional_light.ambient_intensity");
+    uniform_direction = glGetUniformLocation(shader_ID, "directional_light.direction");
+    uniform_diffuse_intensity = glGetUniformLocation(shader_ID, "directional_light.diffuse_intensity");
+    uniform_eye_position = glGetUniformLocation(shader_ID, "eye_position");
+    uniform_specular_intensity = glGetUniformLocation(shader_ID, "material.specular_intensity");
+    uniform_shininess = glGetUniformLocation(shader_ID, "material.shininess");
 }
 
 void Shader::use_shader() const
