@@ -13,8 +13,9 @@
 #include "EntityRenderer.h"
 #include "EntityManager.h"
 #include "Cube.h"
-#include "Light.h"
+#include "DirectionalLight.h"
 #include "Material.h"
+#include "PointLight.h"
 
 #define PI 3.14159265358979f
 
@@ -431,10 +432,13 @@ int main() {
     app_shader.use_shader();
 
     // Light
-    Light main_light(glm::vec3(1.0f, 1.0f, 1.0f), 0.1f, glm::vec3(10.0f, 5.0f, 2.0f), 0.3f);
+    // DirectionalLight main_light = DirectionalLight(glm::vec3(1.0f, 1.0f, 1.0f), 0.1f, 0.5f, glm::vec3(10.0f, 5.0f, 2.0f));
+    PointLight point_lights[2];;
+    point_lights[0] = PointLight(glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.5f, glm::vec3(0.0, 30.0f, 0.0f), 1.0f, 0.0014f, 0.000007f);
+    point_lights[1] = PointLight(glm::vec3(1.0f, 1.0f, 1.0f), 0.2f, 0.5f, glm::vec3(0.0, 5.0f, -2.0f), 1.0f, 0.14f, 0.07f);
 
     // TODO Remove this eventually, this should be customizable for each entity group/mesh
-    Material shiny_material(0.5f, 32);
+    Material shiny_material(0.7f, 16);
 
 	// Init entity renderer and manager, create necessary entities
 	EntityRenderer entityRenderer(app_shader);
@@ -515,11 +519,9 @@ int main() {
 		// Clear window
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        main_light.use_light(
-                app_shader.get_ambient_intensity_location(),
-                app_shader.get_ambient_color_location(),
-                app_shader.get_diffuse_intensity_location(),
-                app_shader.get_direction_location());
+		// TODO Eventually remove this, helps with testing specular
+		//app_shader.set_directional_light(&main_light);
+		app_shader.set_point_lights(point_lights, sizeof(point_lights)/sizeof(PointLight));
 
         shiny_material.use_material(app_shader.get_specular_intensity_location(), app_shader.get_shininess_location());
 

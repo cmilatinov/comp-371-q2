@@ -73,13 +73,43 @@ void Shader::compile(const char* vertex_code, const char* fragment_code)
 	uniform_projection = glGetUniformLocation(shader_ID, "projection");
 	uniform_model = glGetUniformLocation(shader_ID, "model");
 	uniform_view = glGetUniformLocation(shader_ID, "view");
-    uniform_ambient_color = glGetUniformLocation(shader_ID, "directional_light.color");
-    uniform_ambient_intensity = glGetUniformLocation(shader_ID, "directional_light.ambient_intensity");
-    uniform_direction = glGetUniformLocation(shader_ID, "directional_light.direction");
-    uniform_diffuse_intensity = glGetUniformLocation(shader_ID, "directional_light.diffuse_intensity");
+
+    uniform_directional_light.uniform_color = glGetUniformLocation(shader_ID, "directional_light.base.color");
+    uniform_directional_light.uniform_ambient_intensity = glGetUniformLocation(shader_ID, "directional_light.base.ambient_intensity");
+    uniform_directional_light.uniform_direction = glGetUniformLocation(shader_ID, "directional_light.direction");
+    uniform_directional_light.uniform_diffuse_intensity = glGetUniformLocation(shader_ID, "directional_light.base.diffuse_intensity");
+
     uniform_eye_position = glGetUniformLocation(shader_ID, "eye_position");
     uniform_specular_intensity = glGetUniformLocation(shader_ID, "material.specular_intensity");
     uniform_shininess = glGetUniformLocation(shader_ID, "material.shininess");
+
+    uniform_point_light_count = glGetUniformLocation(shader_ID, "point_light_count");
+
+    for (size_t i = 0; i < MAX_POINT_LIGHTS; i++)
+    {
+        char location_buffer[100] = { '\0' };
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].base.color", i);
+        uniform_point_light[i].uniform_color = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].base.ambient_intensity", i);
+        uniform_point_light[i].uniform_ambient_intensity = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].base.diffuse_intensity", i);
+        uniform_point_light[i].uniform_diffuse_intensity = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].position", i);
+        uniform_point_light[i].uniform_position = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].constant", i);
+        uniform_point_light[i].uniform_constant = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].linear", i);
+        uniform_point_light[i].uniform_linear = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].exponent", i);
+        uniform_point_light[i].uniform_exponent = glGetUniformLocation(shader_ID, location_buffer);
+    }
 }
 
 void Shader::use_shader() const
@@ -125,4 +155,32 @@ void Shader::add_shader(GLuint program, const char* shader_code, GLenum shader_t
 Shader::~Shader()
 {
 	clear_shader();
+}
+
+void Shader::set_directional_light(DirectionalLight *d_light) {
+    d_light->use_light(uniform_directional_light.uniform_ambient_intensity,
+                       uniform_directional_light.uniform_color,
+                       uniform_directional_light.uniform_diffuse_intensity,
+                       uniform_directional_light.uniform_direction);
+}
+
+void Shader::set_point_lights(PointLight *p_lights, unsigned int count) {
+    if (count > MAX_POINT_LIGHTS)
+        point_light_count = MAX_POINT_LIGHTS;
+    else
+        point_light_count = count;
+
+    glUniform1i(uniform_point_light_count, point_light_count);
+
+    for (size_t i = 0; i < point_light_count; i++)
+    {
+        p_lights[i].use_light(
+                uniform_point_light[i].uniform_ambient_intensity,
+                uniform_point_light[i].uniform_color,
+                uniform_point_light[i].uniform_diffuse_intensity,
+                uniform_point_light[i].uniform_position,
+                uniform_point_light[i].uniform_constant,
+                uniform_point_light[i].uniform_linear,
+                uniform_point_light[i].uniform_exponent);
+    }
 }
