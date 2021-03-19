@@ -29,9 +29,22 @@ static const char * vertex_path = "Shaders/shader.vert";
 // Fragment Shader file path
 static const char * fragment_path = "Shaders/shader.frag";
 
+// Shadow Map Shader vertex file path
+static const char * shadow_vertex_path = "Shaders/omni_shadow_map.vert";
+// Shadow Map Shader fragment file path
+static const char * shadow_fragment_path = "Shaders/omni_shadow_map.frag";
+// Shadow Map Shader geometry file path
+static const char * shadow_geometry_path = "Shaders/omni_shadow_map.geom";
+
 void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityGroup ** groups) {
     const Mesh * cube = loader.create_mesh(CUBE_VERTEX_ARRAY, sizeof(CUBE_VERTEX_ARRAY) / sizeof(glm::vec3));
 
+    Entity * floor = (new Entity(cube))
+            ->scale(vec3(180, 1, 180))
+            ->translate(vec3(0, 1.0f, 0));
+
+    EntityGroup * floor_g = (new EntityGroup())
+            ->add(floor);
     // LETTER S
 
     Entity * s_1 = (new Entity(cube))
@@ -398,6 +411,7 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
     entityManager.add(stevenPosition);
     entityManager.add(steven2Position);
     entityManager.add(mahdi2Position);
+    entityManager.add(floor_g);
 
     delete letter_c;
     delete letter_i;
@@ -410,6 +424,26 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
     delete number_7;
     delete number_8;
 
+}
+
+void omni_shadow_map_pass(Shader * shader, PointLight * light)
+{
+    shader->use_shader();
+
+    glViewport(0, 0, light->get_shadow_map()->get_shadow_width(), light->get_shadow_map()->get_shadow_height());
+
+    light->get_shadow_map()->write();
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // GLuint uniform_model = shader->get_model_location();
+    GLuint uniform_far_plane = shader->get_far_plane_location();
+    GLuint uniform_light_pos = shader->get_omni_light_pos_location();
+
+    glUniform3f(uniform_light_pos, light->get_position().x, light->get_position().y, light->get_position().z);
+    glUniform1f(uniform_far_plane, light->get_far_plane());
+    shader->set_light_matrices(light->calculate_light_transform());
+
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
@@ -425,24 +459,29 @@ int main() {
     // Creates the camera, used as an abstraction to calculate the view matrix
     Camera camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.2f, &main_window);
 
-    // Load shader program
+    // Load shader programs
 	Shader app_shader(vertex_path, fragment_path);
+	Shader omni_shadow_shader(shadow_vertex_path, shadow_fragment_path, shadow_geometry_path);
 
     // Use the loaded shader
-    app_shader.use_shader();
+    // app_shader.use_shader();
 
     // Light
-    // DirectionalLight main_light = DirectionalLight(glm::vec3(1.0f, 1.0f, 1.0f), 0.1f, 0.5f, glm::vec3(10.0f, 5.0f, 2.0f));
-    PointLight point_lights[2];;
-    point_lights[0] = PointLight(glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.5f, glm::vec3(0.0, 30.0f, 0.0f), 1.0f, 0.0014f, 0.000007f);
-    point_lights[1] = PointLight(glm::vec3(1.0f, 1.0f, 1.0f), 0.2f, 0.5f, glm::vec3(0.0, 5.0f, -2.0f), 1.0f, 0.14f, 0.07f);
+    DirectionalLight main_light = DirectionalLight(1024, 1024, glm::vec3(1.0f, 1.0f, 1.0f), 0.1f, 0.5f, glm::vec3(10.0f, 5.0f, 2.0f));
+    PointLight point_lights[1];
+    //point_lights[0] = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.5f, glm::vec3(0.0, 5.0f, 0.0f), 1.0f, 0.0014f, 0.000007f);
+    //point_lights[0] = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(1.0f, 1.0f, 1.0f), 0.2f, 0.5f, glm::vec3(0.0, 15.0f, -2.0f), 1.0f, 0.14f, 0.07f);
+    point_lights[0] = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(1.0f, 3.0f, 4.0f), 0.2f, 0.5f, glm::vec3(0.0, 5.0f, -2.0f), 1.0f, 0.14f, 0.07f);
 
     // TODO Remove this eventually, this should be customizable for each entity group/mesh
-    Material shiny_material(0.7f, 16);
+    Material shiny_material(0.9f, 16);
 
 	// Init entity renderer and manager, create necessary entities
 	EntityRenderer entityRenderer(app_shader);
+    EntityRenderer shadowRenderer(omni_shadow_shader);
+
 	EntityManager entityManager;
+
     MeshLoader loader;
 
     // The array of models
@@ -521,12 +560,21 @@ int main() {
 
 		// TODO Eventually remove this, helps with testing specular
 		//app_shader.set_directional_light(&main_light);
-		app_shader.set_point_lights(point_lights, sizeof(point_lights)/sizeof(PointLight));
+        for (size_t i = 0; i < 1; i++)
+        {
+            omni_shadow_map_pass(&omni_shadow_shader, &point_lights[i]);
 
-        shiny_material.use_material(app_shader.get_specular_intensity_location(), app_shader.get_shininess_location());
+            shiny_material.use_material(app_shader.get_specular_intensity_location(), app_shader.get_shininess_location());
+            shadowRenderer.render(camera, entityManager);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+        }
         // Render entities
+        app_shader.use_shader();
+
         entityRenderer.render(camera, entityManager);
+
+        app_shader.set_point_lights(point_lights, sizeof(point_lights)/sizeof(PointLight));
 
         glUniformMatrix4fv(app_shader.get_projection_location(), 1, GL_FALSE, glm::value_ptr(camera.calculate_projection()));
         glUniformMatrix4fv(app_shader.get_model_location(), 1, GL_FALSE, glm::value_ptr(mat4(1.0f)));

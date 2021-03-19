@@ -37,6 +37,12 @@ struct Material
 	float shininess;
 };
 
+struct OmniShadowMap
+{
+	samplerCube shadow_map;
+	float far_plane;
+};
+
 uniform int point_light_count;
 
 uniform DirectionalLight directional_light;
@@ -46,7 +52,18 @@ uniform Material material;
 // Camera position
 uniform vec3 eye_position;
 
-vec4 calculate_light_by_direction(Light light, vec3 direction)
+uniform OmniShadowMap omni_shadow_maps[MAX_POINT_LIGHTS];
+
+vec3 gridSamplingDisk[20] = vec3[]
+(
+vec3(1, 1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1, 1,  1),
+vec3(1, 1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+vec3(1, 1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1, 1,  0),
+vec3(1, 0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1, 0, -1),
+vec3(0, 1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0, 1, -1)
+);
+
+vec4 calculate_light_by_direction(Light light, vec3 direction, float shadow_factor)
 {
 	vec4 ambient_color = vec4(light.color, 1.0f) * light.ambient_intensity;
 
@@ -68,33 +85,60 @@ vec4 calculate_light_by_direction(Light light, vec3 direction)
 		}
 	}
 
-	return (ambient_color + diffuse_color + specular_color);
+	return (ambient_color + (1.0 - shadow_factor) * (diffuse_color + specular_color));
 }
 
-vec4 calculate_directional_light()
+//vec4 calculate_directional_light()
+//{
+//	// float shadow_factor = ca(DirectionalLightSpacePos);
+//	return calculate_light_by_direction(directional_light.base, directional_light.direction);
+//}
+
+float calculate_point_shadow_factor(PointLight point_light, int shadow_index)
 {
-	return calculate_light_by_direction(directional_light.base, directional_light.direction);
+	vec3 frag_to_light = fragment_position - point_light.position;
+	float current_depth = length(frag_to_light);
+
+	float shadow = 0.0;
+	float bias   = 0.15;
+	int samples  = 20;
+
+	float view_distance = length(eye_position - fragment_position);
+	float disk_radius = (1.0 + (view_distance / omni_shadow_maps[shadow_index].far_plane)) / 25.0;
+	for(int i = 0; i < samples; ++i)
+	{
+		float closest_depth = texture(omni_shadow_maps[shadow_index].shadow_map, frag_to_light + gridSamplingDisk[i] * disk_radius).r;
+		closest_depth *= omni_shadow_maps[shadow_index].far_plane;   // Undo mapping [0;1]
+		if(current_depth - bias > closest_depth)
+			shadow += 1.0;
+	}
+	shadow /= float(samples);
+
+	return shadow;
+}
+
+vec4 calculate_point_light(PointLight point_light, int shadow_index)
+{
+	vec3 direction = fragment_position - point_light.position;
+	float distance = length(direction);
+	direction = normalize(direction);
+
+	float shadow_factor = calculate_point_shadow_factor(point_light, shadow_index);
+
+	vec4 colour = calculate_light_by_direction(point_light.base, direction, shadow_factor);
+	float attenuation = point_light.exponent * distance * distance +
+	point_light.linear * distance +
+	point_light.constant;
+
+	return (colour / attenuation);
 }
 
 vec4 calculate_point_lights()
 {
 	vec4 total_color = vec4(0, 0, 0, 0);
-
-	for (int i = 0; i < point_light_count; i++)
+	for(int i = 0; i < point_light_count; i++)
 	{
-		// Get the direction based on the position of the light from the fragment
-		vec3 direction = fragment_position - point_lights[i].position;
-		// Store the length before we normalize it
-		float distance = length(direction);
-		direction = normalize(direction);
-
-		vec4 color = calculate_light_by_direction(point_lights[i].base, direction);
-		// Quadratic formula
-		float attenuation = (point_lights[i].exponent * (distance * distance) +
-					point_lights[i].linear * distance +
-					point_lights[i].constant);
-
-		total_color += (color / attenuation);
+		total_color += calculate_point_light(point_lights[i], i);
 	}
 
 	return total_color;
@@ -102,8 +146,8 @@ vec4 calculate_point_lights()
 
 void main()
 {
-	vec4 computed_color = calculate_directional_light();
-	computed_color += calculate_point_lights();
+	// vec4 computed_color = calculate_directional_light();
+	vec4 computed_color = calculate_point_lights();
 
 	colour = vec4(vCol.r, vCol.g, vCol.b, 1.0f) * computed_color;
 }

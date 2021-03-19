@@ -4,15 +4,32 @@ Shader::Shader(const char* vertex_file_path, const char* fragment_file_path) {
     create_from_files(vertex_file_path, fragment_file_path);
 }
 
+Shader::Shader(const char* vertex_file_path, const char* fragment_file_path, const char* geometry_file_path) {
+    create_from_files(vertex_file_path, fragment_file_path, geometry_file_path);
+}
+
 void Shader::create_from_files(const char* vertex_file_path, const char* fragment_file_path)
 {
 	std::string vertex_string = read_file(vertex_file_path);
 	std::string fragment_string = read_file(fragment_file_path);
 
-	const char* vertexCode = vertex_string.c_str();
-	const char* fragmentCode = fragment_string.c_str();
+	const char* vertex_code = vertex_string.c_str();
+	const char* fragment_code = fragment_string.c_str();
 
-	compile(vertexCode, fragmentCode);
+	compile_shader(vertex_code, fragment_code);
+}
+
+void Shader::create_from_files(const char* vertex_file_path, const char* fragment_file_path, const char* geometry_file_path)
+{
+    std::string vertex_string = read_file(vertex_file_path);
+    std::string fragment_string = read_file(fragment_file_path);
+    std::string geometry_string = read_file(geometry_file_path);
+
+    const char* vertex_code = vertex_string.c_str();
+    const char* fragment_code = fragment_string.c_str();
+    const char* geometry_code = geometry_string.c_str();
+
+    compile_shader(vertex_code, fragment_code, geometry_code);
 }
 
 std::string Shader::read_file(const char* file_path)
@@ -36,7 +53,7 @@ std::string Shader::read_file(const char* file_path)
 	return content;
 }
 
-void Shader::compile(const char* vertex_code, const char* fragment_code)
+void Shader::compile_shader(const char* vertex_code, const char* fragment_code)
 {
 	shader_ID = glCreateProgram();
 
@@ -49,67 +66,24 @@ void Shader::compile(const char* vertex_code, const char* fragment_code)
 	add_shader(shader_ID, vertex_code, GL_VERTEX_SHADER);
 	add_shader(shader_ID, fragment_code, GL_FRAGMENT_SHADER);
 
-	GLint result = 0;
-	GLchar info_log[1024] = { 0 };
+    compile_program();
+}
 
-	glLinkProgram(shader_ID);
-	glGetProgramiv(shader_ID, GL_LINK_STATUS, &result);
-	if (!result)
-	{
-		glGetProgramInfoLog(shader_ID, sizeof(info_log), NULL, info_log);
-		printf("Error linking program: '%s'\n", info_log);
-		return;
-	}
+void Shader::compile_shader(const char* vertex_code, const char* fragment_code, const char* geometry_code)
+{
+    shader_ID = glCreateProgram();
 
-	glValidateProgram(shader_ID);
-	glGetProgramiv(shader_ID, GL_VALIDATE_STATUS, &result);
-	if (!result)
-	{
-		glGetProgramInfoLog(shader_ID, sizeof(info_log), NULL, info_log);
-		printf("Error validating program: '%s'\n", info_log);
-		return;
-	}
-
-	uniform_projection = glGetUniformLocation(shader_ID, "projection");
-	uniform_model = glGetUniformLocation(shader_ID, "model");
-	uniform_view = glGetUniformLocation(shader_ID, "view");
-
-    uniform_directional_light.uniform_color = glGetUniformLocation(shader_ID, "directional_light.base.color");
-    uniform_directional_light.uniform_ambient_intensity = glGetUniformLocation(shader_ID, "directional_light.base.ambient_intensity");
-    uniform_directional_light.uniform_direction = glGetUniformLocation(shader_ID, "directional_light.direction");
-    uniform_directional_light.uniform_diffuse_intensity = glGetUniformLocation(shader_ID, "directional_light.base.diffuse_intensity");
-
-    uniform_eye_position = glGetUniformLocation(shader_ID, "eye_position");
-    uniform_specular_intensity = glGetUniformLocation(shader_ID, "material.specular_intensity");
-    uniform_shininess = glGetUniformLocation(shader_ID, "material.shininess");
-
-    uniform_point_light_count = glGetUniformLocation(shader_ID, "point_light_count");
-
-    for (size_t i = 0; i < MAX_POINT_LIGHTS; i++)
+    if (!shader_ID)
     {
-        char location_buffer[100] = { '\0' };
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].base.color", i);
-        uniform_point_light[i].uniform_color = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].base.ambient_intensity", i);
-        uniform_point_light[i].uniform_ambient_intensity = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].base.diffuse_intensity", i);
-        uniform_point_light[i].uniform_diffuse_intensity = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].position", i);
-        uniform_point_light[i].uniform_position = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].constant", i);
-        uniform_point_light[i].uniform_constant = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].linear", i);
-        uniform_point_light[i].uniform_linear = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].exponent", i);
-        uniform_point_light[i].uniform_exponent = glGetUniformLocation(shader_ID, location_buffer);
+        printf("Error creating shader program!\n");
+        return;
     }
+
+    add_shader(shader_ID, vertex_code, GL_VERTEX_SHADER);
+    add_shader(shader_ID, fragment_code, GL_FRAGMENT_SHADER);
+    add_shader(shader_ID, geometry_code, GL_GEOMETRY_SHADER);
+
+    compile_program();
 }
 
 void Shader::use_shader() const
@@ -182,5 +156,104 @@ void Shader::set_point_lights(PointLight *p_lights, unsigned int count) {
                 uniform_point_light[i].uniform_constant,
                 uniform_point_light[i].uniform_linear,
                 uniform_point_light[i].uniform_exponent);
+
+        p_lights[i].get_shadow_map()->read(GL_TEXTURE0 + i);
+        glUniform1i(uniform_omni_shadow_map[i].uniform_shadow_map, i);
+        glUniform1f(uniform_omni_shadow_map[i].uniform_far_plane, p_lights[i].get_far_plane());
+    }
+}
+
+void Shader::set_light_matrices(std::vector<glm::mat4> light_matrices) {
+    for(size_t i = 0; i < 6; i++)
+    {
+        glUniformMatrix4fv(uniform_light_matrices[i], 1, GL_FALSE, glm::value_ptr(light_matrices[i]));
+    }
+}
+
+void Shader::compile_program() {
+    GLint result = 0;
+    GLchar info_log[1024] = { 0 };
+
+    glLinkProgram(shader_ID);
+    glGetProgramiv(shader_ID, GL_LINK_STATUS, &result);
+    if (!result)
+    {
+        glGetProgramInfoLog(shader_ID, sizeof(info_log), NULL, info_log);
+        printf("Error linking program: '%s'\n", info_log);
+        return;
+    }
+
+    glValidateProgram(shader_ID);
+    glGetProgramiv(shader_ID, GL_VALIDATE_STATUS, &result);
+    if (!result)
+    {
+        glGetProgramInfoLog(shader_ID, sizeof(info_log), NULL, info_log);
+        printf("Error validating program: '%s'\n", info_log);
+        return;
+    }
+
+    uniform_projection = glGetUniformLocation(shader_ID, "projection");
+    uniform_model = glGetUniformLocation(shader_ID, "model");
+    uniform_view = glGetUniformLocation(shader_ID, "view");
+
+    // Lights + Phong
+    uniform_directional_light.uniform_color = glGetUniformLocation(shader_ID, "directional_light.base.color");
+    uniform_directional_light.uniform_ambient_intensity = glGetUniformLocation(shader_ID, "directional_light.base.ambient_intensity");
+    uniform_directional_light.uniform_direction = glGetUniformLocation(shader_ID, "directional_light.direction");
+    uniform_directional_light.uniform_diffuse_intensity = glGetUniformLocation(shader_ID, "directional_light.base.diffuse_intensity");
+
+    uniform_eye_position = glGetUniformLocation(shader_ID, "eye_position");
+    uniform_specular_intensity = glGetUniformLocation(shader_ID, "material.specular_intensity");
+    uniform_shininess = glGetUniformLocation(shader_ID, "material.shininess");
+
+    uniform_point_light_count = glGetUniformLocation(shader_ID, "point_light_count");
+
+    for (size_t i = 0; i < MAX_POINT_LIGHTS; i++)
+    {
+        char location_buffer[100] = { '\0' };
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].base.color", i);
+        uniform_point_light[i].uniform_color = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].base.ambient_intensity", i);
+        uniform_point_light[i].uniform_ambient_intensity = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].base.diffuse_intensity", i);
+        uniform_point_light[i].uniform_diffuse_intensity = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].position", i);
+        uniform_point_light[i].uniform_position = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].constant", i);
+        uniform_point_light[i].uniform_constant = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].linear", i);
+        uniform_point_light[i].uniform_linear = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].exponent", i);
+        uniform_point_light[i].uniform_exponent = glGetUniformLocation(shader_ID, location_buffer);
+    }
+
+    // Shadow Map
+    uniform_omni_light_pos = glGetUniformLocation(shader_ID, "light_pos");
+    uniform_far_plane = glGetUniformLocation(shader_ID, "far_plane");
+
+    for (size_t i = 0; i < 6; i++)
+    {
+        char location_buffer[100] = { '\0' };
+
+        snprintf(location_buffer, sizeof(location_buffer), "light_matrices[%d]", i);
+        uniform_light_matrices[i] = glGetUniformLocation(shader_ID, location_buffer);
+    }
+
+    for (size_t i = 0; i < MAX_POINT_LIGHTS; i++)
+    {
+        char location_buffer[100] = { '\0' };
+
+        snprintf(location_buffer, sizeof(location_buffer), "omni_shadow_maps[%d].shadow_map", i);
+        uniform_omni_shadow_map[i].uniform_shadow_map = glGetUniformLocation(shader_ID, location_buffer);
+
+        snprintf(location_buffer, sizeof(location_buffer), "omni_shadow_maps[%d].far_plane", i);
+        uniform_omni_shadow_map[i].uniform_far_plane = glGetUniformLocation(shader_ID, location_buffer);
     }
 }

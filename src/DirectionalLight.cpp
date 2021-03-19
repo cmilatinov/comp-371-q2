@@ -4,8 +4,8 @@ DirectionalLight::DirectionalLight() : Light() {
     direction = glm::vec3(0.0f, -1.0f, 0.0f);
 }
 
-DirectionalLight::DirectionalLight(glm::vec3 color, GLfloat ambient_intensity, GLfloat diffuse_intensity,
-                                   glm::vec3 direction) : Light(color, ambient_intensity, diffuse_intensity) {
+DirectionalLight::DirectionalLight(GLuint shadow_width, GLuint shadow_height, glm::vec3 color, GLfloat ambient_intensity, GLfloat diffuse_intensity,
+                                   glm::vec3 direction) : Light(shadow_width, shadow_height, color, ambient_intensity, diffuse_intensity) {
     this->direction = direction;
 }
 
