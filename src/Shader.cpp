@@ -138,29 +138,19 @@ void Shader::set_directional_light(DirectionalLight *d_light) {
                        uniform_directional_light.uniform_direction);
 }
 
-void Shader::set_point_lights(PointLight *p_lights, unsigned int count) {
-    if (count > MAX_POINT_LIGHTS)
-        point_light_count = MAX_POINT_LIGHTS;
-    else
-        point_light_count = count;
+void Shader::set_point_light(PointLight p_light) const {
+    p_light.use_light(
+                uniform_point_light.uniform_ambient_intensity,
+                uniform_point_light.uniform_color,
+                uniform_point_light.uniform_diffuse_intensity,
+                uniform_point_light.uniform_position,
+                uniform_point_light.uniform_constant,
+                uniform_point_light.uniform_linear,
+                uniform_point_light.uniform_exponent);
 
-    glUniform1i(uniform_point_light_count, point_light_count);
-
-    for (size_t i = 0; i < point_light_count; i++)
-    {
-        p_lights[i].use_light(
-                uniform_point_light[i].uniform_ambient_intensity,
-                uniform_point_light[i].uniform_color,
-                uniform_point_light[i].uniform_diffuse_intensity,
-                uniform_point_light[i].uniform_position,
-                uniform_point_light[i].uniform_constant,
-                uniform_point_light[i].uniform_linear,
-                uniform_point_light[i].uniform_exponent);
-
-        p_lights[i].get_shadow_map()->read(GL_TEXTURE0 + i);
-        glUniform1i(uniform_omni_shadow_map[i].uniform_shadow_map, i);
-        glUniform1f(uniform_omni_shadow_map[i].uniform_far_plane, p_lights[i].get_far_plane());
-    }
+        p_light.get_shadow_map()->read(GL_TEXTURE0);
+        glUniform1i(uniform_omni_shadow_map.uniform_shadow_map, 0);
+        glUniform1f(uniform_omni_shadow_map.uniform_far_plane, p_light.get_far_plane());
 }
 
 void Shader::set_light_matrices(std::vector<glm::mat4> light_matrices) {
@@ -206,33 +196,13 @@ void Shader::compile_program() {
     uniform_specular_intensity = glGetUniformLocation(shader_ID, "material.specular_intensity");
     uniform_shininess = glGetUniformLocation(shader_ID, "material.shininess");
 
-    uniform_point_light_count = glGetUniformLocation(shader_ID, "point_light_count");
-
-    for (size_t i = 0; i < MAX_POINT_LIGHTS; i++)
-    {
-        char location_buffer[100] = { '\0' };
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].base.color", i);
-        uniform_point_light[i].uniform_color = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].base.ambient_intensity", i);
-        uniform_point_light[i].uniform_ambient_intensity = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].base.diffuse_intensity", i);
-        uniform_point_light[i].uniform_diffuse_intensity = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].position", i);
-        uniform_point_light[i].uniform_position = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].constant", i);
-        uniform_point_light[i].uniform_constant = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].linear", i);
-        uniform_point_light[i].uniform_linear = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "point_lights[%d].exponent", i);
-        uniform_point_light[i].uniform_exponent = glGetUniformLocation(shader_ID, location_buffer);
-    }
+    uniform_point_light.uniform_color = glGetUniformLocation(shader_ID, "point_light.base.color");
+    uniform_point_light.uniform_ambient_intensity = glGetUniformLocation(shader_ID, "point_light.base.ambient_intensity");
+    uniform_point_light.uniform_diffuse_intensity = glGetUniformLocation(shader_ID, "point_light.base.diffuse_intensity");
+    uniform_point_light.uniform_position = glGetUniformLocation(shader_ID, "point_light.position");
+    uniform_point_light.uniform_constant = glGetUniformLocation(shader_ID, "point_light.constant");
+    uniform_point_light.uniform_linear = glGetUniformLocation(shader_ID, "point_light.linear");
+    uniform_point_light.uniform_exponent = glGetUniformLocation(shader_ID, "point_light.exponent");
 
     // Shadow Map
     uniform_omni_light_pos = glGetUniformLocation(shader_ID, "light_pos");
@@ -246,14 +216,11 @@ void Shader::compile_program() {
         uniform_light_matrices[i] = glGetUniformLocation(shader_ID, location_buffer);
     }
 
-    for (size_t i = 0; i < MAX_POINT_LIGHTS; i++)
-    {
-        char location_buffer[100] = { '\0' };
+    uniform_omni_shadow_map.uniform_shadow_map = glGetUniformLocation(shader_ID, "omni_shadow_map.shadow_map");
+    uniform_omni_shadow_map.uniform_far_plane = glGetUniformLocation(shader_ID, "omni_shadow_map.far_plane");
+}
 
-        snprintf(location_buffer, sizeof(location_buffer), "omni_shadow_maps[%d].shadow_map", i);
-        uniform_omni_shadow_map[i].uniform_shadow_map = glGetUniformLocation(shader_ID, location_buffer);
-
-        snprintf(location_buffer, sizeof(location_buffer), "omni_shadow_maps[%d].far_plane", i);
-        uniform_omni_shadow_map[i].uniform_far_plane = glGetUniformLocation(shader_ID, location_buffer);
-    }
+void Shader::toggle_shadows() {
+    glUniform1i(glGetUniformLocation(shader_ID, "shadow_toggle"), !shadow_toggle);
+    shadow_toggle = !shadow_toggle;
 }

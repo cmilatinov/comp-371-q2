@@ -41,7 +41,7 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
 
     Entity * floor = (new Entity(cube))
             ->scale(vec3(180, 1, 180))
-            ->translate(vec3(0, 1.0f, 0));
+            ->translate(vec3(0, -2.0f, 0));
 
     EntityGroup * floor_g = (new EntityGroup())
             ->add(floor);
@@ -435,15 +435,12 @@ void omni_shadow_map_pass(Shader * shader, PointLight * light)
     light->get_shadow_map()->write();
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    // GLuint uniform_model = shader->get_model_location();
     GLuint uniform_far_plane = shader->get_far_plane_location();
     GLuint uniform_light_pos = shader->get_omni_light_pos_location();
 
     glUniform3f(uniform_light_pos, light->get_position().x, light->get_position().y, light->get_position().z);
     glUniform1f(uniform_far_plane, light->get_far_plane());
     shader->set_light_matrices(light->calculate_light_transform());
-
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
@@ -463,15 +460,8 @@ int main() {
 	Shader app_shader(vertex_path, fragment_path);
 	Shader omni_shadow_shader(shadow_vertex_path, shadow_fragment_path, shadow_geometry_path);
 
-    // Use the loaded shader
-    // app_shader.use_shader();
-
     // Light
-    DirectionalLight main_light = DirectionalLight(1024, 1024, glm::vec3(1.0f, 1.0f, 1.0f), 0.1f, 0.5f, glm::vec3(10.0f, 5.0f, 2.0f));
-    PointLight point_lights[1];
-    //point_lights[0] = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.5f, glm::vec3(0.0, 5.0f, 0.0f), 1.0f, 0.0014f, 0.000007f);
-    //point_lights[0] = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(1.0f, 1.0f, 1.0f), 0.2f, 0.5f, glm::vec3(0.0, 15.0f, -2.0f), 1.0f, 0.14f, 0.07f);
-    point_lights[0] = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(1.0f, 3.0f, 4.0f), 0.2f, 0.5f, glm::vec3(0.0, 5.0f, -2.0f), 1.0f, 0.14f, 0.07f);
+    PointLight point_light = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(1.0f, 3.0f, 4.0f), 0.2f, 0.5f, glm::vec3(0.0, 5.0f, -2.0f), 1.0f, 0.14f, 0.07f);
 
     // TODO Remove this eventually, this should be customizable for each entity group/mesh
     Material shiny_material(0.9f, 16);
@@ -527,7 +517,9 @@ int main() {
         GLfloat delta_time = now - last_time;
 		last_time = now;
 
-		
+        // Render entities
+        app_shader.use_shader();
+
 		// Get user input events
 		glfwPollEvents();
 
@@ -551,6 +543,10 @@ int main() {
         {
             selectedModel = models[4];
         }
+        else if (keys[GLFW_KEY_INSERT])
+        {
+            app_shader.toggle_shadows();
+        }
 
 		camera.key_controls(main_window.get_keys(), delta_time, selectedModel);
 		camera.mouse_controls(main_window.get_x_change(), main_window.get_y_change(), main_window.get_mouse_buttons(), delta_time);
@@ -558,23 +554,16 @@ int main() {
 		// Clear window
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// TODO Eventually remove this, helps with testing specular
-		//app_shader.set_directional_light(&main_light);
-        for (size_t i = 0; i < 1; i++)
-        {
-            omni_shadow_map_pass(&omni_shadow_shader, &point_lights[i]);
-
-            shiny_material.use_material(app_shader.get_specular_intensity_location(), app_shader.get_shininess_location());
-            shadowRenderer.render(camera, entityManager);
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        }
-        // Render entities
-        app_shader.use_shader();
+		// Render shadow maps
+		omni_shadow_map_pass(&omni_shadow_shader, &point_light);
+		shiny_material.use_material(app_shader.get_specular_intensity_location(), app_shader.get_shininess_location());
+		shadowRenderer.render(camera, entityManager);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// End shadows
 
         entityRenderer.render(camera, entityManager);
 
-        app_shader.set_point_lights(point_lights, sizeof(point_lights)/sizeof(PointLight));
+        app_shader.set_point_light(point_light);
 
         glUniformMatrix4fv(app_shader.get_projection_location(), 1, GL_FALSE, glm::value_ptr(camera.calculate_projection()));
         glUniformMatrix4fv(app_shader.get_model_location(), 1, GL_FALSE, glm::value_ptr(mat4(1.0f)));

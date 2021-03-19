@@ -31,8 +31,10 @@ public:
     GLuint get_far_plane_location() { return uniform_far_plane; };
 
     void set_directional_light(DirectionalLight * d_light);
-    void set_point_lights(PointLight * p_lights, unsigned int count);
+    void set_point_light(PointLight p_lights) const;
     void set_light_matrices(std::vector<glm::mat4> light_matrices);
+
+    void toggle_shadows();
 
 	void use_shader() const;
 	void clear_shader();
@@ -40,11 +42,6 @@ public:
 	~Shader();
 
 private:
-    int point_light_count = 0;
-    static const int MAX_POINT_LIGHTS = 2;
-
-    GLuint uniform_point_light_count;
-
     struct {
         GLuint uniform_color;
         GLuint uniform_ambient_intensity;
@@ -60,12 +57,14 @@ private:
         GLuint uniform_constant;
         GLuint uniform_linear;
         GLuint uniform_exponent;
-    } uniform_point_light[MAX_POINT_LIGHTS];
+    } uniform_point_light;
 
     struct {
         GLuint uniform_shadow_map;
         GLuint uniform_far_plane;
-    } uniform_omni_shadow_map[MAX_POINT_LIGHTS];
+    } uniform_omni_shadow_map;
+
+    bool shadow_toggle = true;
 
 	GLuint shader_ID = 0, uniform_projection = 0, uniform_model = 0, uniform_view = 0, uniform_eye_position = 0;
 	GLuint uniform_specular_intensity = 0, uniform_shininess = 0;
