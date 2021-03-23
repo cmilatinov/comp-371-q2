@@ -131,13 +131,6 @@ Shader::~Shader()
 	clear_shader();
 }
 
-void Shader::set_directional_light(DirectionalLight *d_light) {
-    d_light->use_light(uniform_directional_light.uniform_ambient_intensity,
-                       uniform_directional_light.uniform_color,
-                       uniform_directional_light.uniform_diffuse_intensity,
-                       uniform_directional_light.uniform_direction);
-}
-
 void Shader::set_point_light(PointLight p_light) const {
     p_light.use_light(
                 uniform_point_light.uniform_ambient_intensity,
@@ -187,11 +180,6 @@ void Shader::compile_program() {
     uniform_view = glGetUniformLocation(shader_ID, "view");
 
     // Lights + Phong
-    uniform_directional_light.uniform_color = glGetUniformLocation(shader_ID, "directional_light.base.color");
-    uniform_directional_light.uniform_ambient_intensity = glGetUniformLocation(shader_ID, "directional_light.base.ambient_intensity");
-    uniform_directional_light.uniform_direction = glGetUniformLocation(shader_ID, "directional_light.direction");
-    uniform_directional_light.uniform_diffuse_intensity = glGetUniformLocation(shader_ID, "directional_light.base.diffuse_intensity");
-
     uniform_eye_position = glGetUniformLocation(shader_ID, "eye_position");
     uniform_specular_intensity = glGetUniformLocation(shader_ID, "material.specular_intensity");
     uniform_shininess = glGetUniformLocation(shader_ID, "material.shininess");

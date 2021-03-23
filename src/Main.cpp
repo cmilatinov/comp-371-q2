@@ -13,7 +13,6 @@
 #include "EntityRenderer.h"
 #include "EntityManager.h"
 #include "Cube.h"
-#include "DirectionalLight.h"
 #include "Material.h"
 #include "PointLight.h"
 
@@ -461,7 +460,7 @@ int main() {
 	Shader omni_shadow_shader(shadow_vertex_path, shadow_fragment_path, shadow_geometry_path);
 
     // Light
-    PointLight point_light = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(1.0f, 3.0f, 4.0f), 0.2f, 0.5f, glm::vec3(0.0, 5.0f, -2.0f), 1.0f, 0.14f, 0.07f);
+    PointLight point_light = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(0.3f, 0.3f, 0.3f), 0.2f, 0.5f, glm::vec3(0.0, 5.0f, -2.0f), 1.0f, 0.14f, 0.07f);
 
     // TODO Remove this eventually, this should be customizable for each entity group/mesh
     Material shiny_material(0.9f, 16);

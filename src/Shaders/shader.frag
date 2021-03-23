@@ -6,21 +6,12 @@ in vec3 fragment_position;
 
 out vec4 colour;
 
-const int MAX_POINT_LIGHTS = 3;
-
 struct Light
 {
 	vec3 color;
 	float ambient_intensity;
 	float diffuse_intensity;
 };
-
-struct DirectionalLight
-{
-	Light base;
-	vec3 direction;
-};
-
 struct PointLight
 {
 	Light base;
@@ -45,7 +36,6 @@ struct OmniShadowMap
 
 uniform int point_light_count;
 
-uniform DirectionalLight directional_light;
 uniform PointLight point_light;
 
 uniform Material material;
@@ -67,9 +57,9 @@ vec3 gridSamplingDisk[20] = vec3[]
 
 float ShadowCalculation(vec3 fragPos)
 {
-	vec3 lightPos = vec3(0.0, 0.0, 0.0);
 	// get vector between fragment position and light position
-	vec3 fragToLight = fragPos - lightPos;
+
+	vec3 fragToLight = fragPos - point_light.position;
 
 	float currentDepth = length(fragToLight);
 
@@ -96,22 +86,20 @@ void main()
 	vec3 color = vCol.rgb;
 	vec3 normal = normalize(normal);
 
-	vec3 lightPos = vec3(0.0, 0.0, 0.0);
-	vec3 lightColor = vec3(0.3);
 	// ambient
 	vec3 ambient = 0.3 * color;
 
 	// diffuse
-	vec3 lightDir = normalize(lightPos - fragment_position);
+	vec3 lightDir = normalize(point_light.position - fragment_position);
 	float diff = max(dot(lightDir, normal), 0.0);
-	vec3 diffuse = diff * lightColor;
+	vec3 diffuse = diff * point_light.base.color;
 	// specular
 	vec3 viewDir = normalize(eye_position - fragment_position);
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = 0.0;
 	vec3 halfwayDir = normalize(lightDir + viewDir);
 	spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
-	vec3 specular = spec * lightColor;
+	vec3 specular = spec * point_light.base.color;
 	// calculate shadow
 	float shadow = shadow_toggle ? ShadowCalculation(fragment_position) : 0.0;
 	vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;

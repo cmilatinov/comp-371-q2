@@ -8,7 +8,6 @@
 #include <gl\glew.h>
 #include <glm\gtc\type_ptr.hpp>
 
-#include "DirectionalLight.h"
 #include "PointLight.h"
 
 class Shader
@@ -30,7 +29,6 @@ public:
     GLuint get_omni_light_pos_location() { return uniform_omni_light_pos; };
     GLuint get_far_plane_location() { return uniform_far_plane; };
 
-    void set_directional_light(DirectionalLight * d_light);
     void set_point_light(PointLight p_lights) const;
     void set_light_matrices(std::vector<glm::mat4> light_matrices);
 
@@ -42,13 +40,6 @@ public:
 	~Shader();
 
 private:
-    struct {
-        GLuint uniform_color;
-        GLuint uniform_ambient_intensity;
-        GLuint uniform_diffuse_intensity;
-        GLuint uniform_direction;
-    } uniform_directional_light;
-
     struct {
         GLuint uniform_color;
         GLuint uniform_ambient_intensity;
