@@ -11,7 +11,6 @@ using glm::vec3;
 class EntityGroup {
 
 private:
-    const TexturedMesh * mesh = nullptr;
     vec3 pos, rot, scaleXYZ;
     vector<const Entity*> entities;
     vector<const EntityGroup*> childrenGroups;
@@ -37,10 +36,6 @@ public:
     EntityGroup * set_scale(float scale);
 
     mat4 create_transform() const;
-
-    inline const TexturedMesh * get_mesh() const {
-        return mesh;
-    }
 
     inline const vector<const Entity*> & get_entities() const {
         return entities;

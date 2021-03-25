@@ -9,8 +9,7 @@ EntityGroup::EntityGroup(const EntityGroup * src, bool copyTransform) :
         pos(copyTransform ? src->pos : vec3(0, 0, 0)),
         rot(copyTransform ? src->rot : vec3(0, 0, 0)),
         scaleXYZ(copyTransform ? src->scaleXYZ : vec3(1, 1, 1)),
-        entities(src->entities),
-        mesh(src->mesh) {
+        entities(src->entities) {
     for (const EntityGroup * group : src->childrenGroups) {
         childrenGroups.push_back(new EntityGroup(group, true));
     }
@@ -25,15 +24,7 @@ EntityGroup::~EntityGroup() {
 EntityGroup * EntityGroup::add(const Entity * entity) {
     if (entity == nullptr)
         return this;
-
-    // Cannot add entities of different meshes to the same group
-    if (mesh != nullptr && entity->get_mesh() != mesh)
-        return this;
-
     entities.push_back(entity);
-    if (mesh == nullptr)
-        mesh = entity->get_mesh();
-
     return this;
 }
 

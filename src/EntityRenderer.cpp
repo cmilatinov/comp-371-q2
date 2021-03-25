@@ -64,31 +64,33 @@ void EntityRenderer::render(const mat4 & parentTransform, const EntityGroup * gr
     // If entities are present in this group, render them
     const vector<const Entity*>& groupEntities = group->get_entities();
     if (!groupEntities.empty()) {
-        const Mesh * mesh = group->get_mesh()->get_mesh();
-        const Texture * texture = group->get_mesh()->get_texture();
-
-        // Bind VAO and enable attributes
-        glBindVertexArray(mesh->get_vao());
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glEnableVertexAttribArray(3);
-
-        // Bind texture
-        texture->bind_to_unit(0);
-
         for (const Entity * entity : groupEntities) {
+            const Mesh * mesh = entity->get_mesh()->get_mesh();
+            const Texture * texture = entity->get_mesh()->get_texture();
+
+            // Bind VAO and enable attributes
+            glBindVertexArray(mesh->get_vao());
+            glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
+            glEnableVertexAttribArray(2);
+            glEnableVertexAttribArray(3);
+
+            // Bind texture
+            texture->bind_to_unit(0);
+
+
             // Load model matrix then render
             mat4 transform = parentTransform * groupTransform * entity->create_transform();
             glUniformMatrix4fv(shader.get_model_location(), 1, GL_FALSE, glm::value_ptr(transform));
             mesh->render_mesh();
-        }
 
-        // Disable attributes
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
-        glDisableVertexAttribArray(3);
+            // Disable attributes
+            glDisableVertexAttribArray(0);
+            glDisableVertexAttribArray(1);
+            glDisableVertexAttribArray(2);
+            glDisableVertexAttribArray(3);
+
+        }
     }
 
     // Render children groups, applying this groups transform to them
