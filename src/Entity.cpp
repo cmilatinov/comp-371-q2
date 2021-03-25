@@ -1,8 +1,10 @@
 #include "Entity.h"
-#include <iostream>
 
-Entity::Entity(const Mesh * mesh) :
-        mesh(mesh), pos(0, 0, 0), rot(0, 0, 0), scaleXYZ(1, 1, 1) {}
+Entity::Entity(const TexturedMesh * mesh) :
+        mesh(mesh),
+        pos(0, 0, 0),
+        rot(0, 0, 0),
+        scaleXYZ(1, 1, 1) {}
 
 Entity * Entity::translate(const vec3 & translation) {
     pos += translation;

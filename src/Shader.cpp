@@ -141,8 +141,8 @@ void Shader::set_point_light(PointLight p_light) const {
                 uniform_point_light.uniform_linear,
                 uniform_point_light.uniform_exponent);
 
-        p_light.get_shadow_map()->read(GL_TEXTURE0);
-        glUniform1i(uniform_omni_shadow_map.uniform_shadow_map, 0);
+        p_light.get_shadow_map()->read(GL_TEXTURE1);
+        glUniform1i(uniform_omni_shadow_map.uniform_shadow_map, 1);
         glUniform1f(uniform_omni_shadow_map.uniform_far_plane, p_light.get_far_plane());
 }
 
@@ -178,6 +178,9 @@ void Shader::compile_program() {
     uniform_projection = glGetUniformLocation(shader_ID, "projection");
     uniform_model = glGetUniformLocation(shader_ID, "model");
     uniform_view = glGetUniformLocation(shader_ID, "view");
+
+    uniform_use_texture = glGetUniformLocation(shader_ID, "use_texture");
+    uniform_use_lighting = glGetUniformLocation(shader_ID, "use_lighting");
 
     // Lights + Phong
     uniform_eye_position = glGetUniformLocation(shader_ID, "eye_position");

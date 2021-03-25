@@ -1,16 +1,15 @@
 #include "Mesh.h"
 
-Mesh::Mesh(GLuint vao, GLuint vbo, GLsizei index_count) :
-    vao(vao), vbo(vbo), index_count(index_count) {}
+
+Mesh::Mesh(GLuint vao, GLsizei index_count) :
+        vao(vao), index_count(index_count) {}
 
 void Mesh::render_mesh() const {
-	glDrawArrays(GL_TRIANGLES, 0, index_count);
+	glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, reinterpret_cast<void*>(0));
 }
 
 Mesh::~Mesh() {
-    if (vbo != 0) {
-        glDeleteBuffers(1, &vbo);
-    }
+    glDeleteBuffers(vbos.size(), vbos.data());
 
     if (vao != 0) {
         glDeleteVertexArrays(1, &vao);

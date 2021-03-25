@@ -14,7 +14,7 @@ class EntityManager {
 private:
     vector<const Entity*> entitiesToDelete;
 
-    map<const Mesh*, vector<const Entity*>> entities;
+    map<const TexturedMesh*, vector<const Entity*>> entities;
     vector<const EntityGroup*> entityGroups;
 
     void addToCleanup(const Entity * entity);
@@ -28,7 +28,7 @@ public:
     void add(const EntityGroup * entityGroup);
     void remove(const EntityGroup * entityGroup);
 
-    inline const map<const Mesh*, vector<const Entity*>> & get_entity_map() const {
+    inline const map<const TexturedMesh*, vector<const Entity*>> & get_entity_map() const {
         return entities;
     }
 

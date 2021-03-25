@@ -3,20 +3,25 @@
 
 EntityRenderer::EntityRenderer(const Shader & shader) : shader(shader) {}
 
-void EntityRenderer::render(const Camera & camera, const map<const Mesh *, vector<const Entity *>> & entities) {
+void EntityRenderer::render(const Camera & camera, const map<const TexturedMesh*, vector<const Entity*>> & entities) {
 
     // Enable shader, load view matrix
     shader.use_shader();
     glUniformMatrix4fv(shader.get_view_location(), 1, GL_FALSE, glm::value_ptr(camera.calculate_view_matrix()));
 
     for (const auto & entry : entities) {
-        const Mesh * mesh = entry.first;
+        const Mesh * mesh = entry.first->get_mesh();
+        const Texture * texture = entry.first->get_texture();
 
         // Bind VAO and enable attributes
         glBindVertexArray(mesh->get_vao());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(3);
+
+        // Bind texture
+        texture->bind_to_unit(0);
 
         // This for-loop can easily be instanced to reduce it to one render call
         for (const Entity * entity : entry.second) {
@@ -29,6 +34,7 @@ void EntityRenderer::render(const Camera & camera, const map<const Mesh *, vecto
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
+        glDisableVertexAttribArray(3);
 
     }
 
@@ -46,7 +52,7 @@ void EntityRenderer::render(const Camera & camera, const vector<const EntityGrou
         render(mat4(1.0f), group);
     }
 
-    // Unbind VAO, unbind shader
+    // Unbind VAO
     glBindVertexArray(0);
 }
 
@@ -58,13 +64,18 @@ void EntityRenderer::render(const mat4 & parentTransform, const EntityGroup * gr
     // If entities are present in this group, render them
     const vector<const Entity*>& groupEntities = group->get_entities();
     if (!groupEntities.empty()) {
-        const Mesh * mesh = group->get_mesh();
+        const Mesh * mesh = group->get_mesh()->get_mesh();
+        const Texture * texture = group->get_mesh()->get_texture();
 
         // Bind VAO and enable attributes
         glBindVertexArray(mesh->get_vao());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(3);
+
+        // Bind texture
+        texture->bind_to_unit(0);
 
         for (const Entity * entity : groupEntities) {
             // Load model matrix then render
@@ -77,6 +88,7 @@ void EntityRenderer::render(const mat4 & parentTransform, const EntityGroup * gr
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
+        glDisableVertexAttribArray(3);
     }
 
     // Render children groups, applying this groups transform to them

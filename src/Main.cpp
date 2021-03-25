@@ -9,7 +9,7 @@
 #include "Camera.h"
 #include "Line.h"
 #include "Grid.h"
-#include "MeshLoader.h"
+#include "AssetLoader.h"
 #include "EntityRenderer.h"
 #include "EntityManager.h"
 #include "Cube.h"
@@ -35,17 +35,20 @@ static const char * shadow_fragment_path = "Shaders/omni_shadow_map.frag";
 // Shadow Map Shader geometry file path
 static const char * shadow_geometry_path = "Shaders/omni_shadow_map.geom";
 
-void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityGroup ** groups) {
-    const Mesh * cube = loader.create_mesh(CUBE_VERTEX_ARRAY, sizeof(CUBE_VERTEX_ARRAY) / sizeof(glm::vec3));
+void create_entities(AssetLoader & loader, EntityManager & entityManager, EntityGroup ** groups) {
+    const Mesh * cubeMesh = loader.load_mesh("cube.obj");
+    const Texture * cubeTexture = loader.load_texture_2d("cube.png");
+
+    const TexturedMesh * cube = new TexturedMesh(cubeMesh, cubeTexture);
 
     Entity * floor = (new Entity(cube))
             ->scale(vec3(180, 1, 180))
             ->translate(vec3(0, -2.0f, 0));
 
-    EntityGroup * floor_g = (new EntityGroup())
-            ->add(floor);
-    // LETTER S
+    entityManager.add(floor);
 
+
+    // LETTER S
     Entity * s_1 = (new Entity(cube))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(2, 2.5f, 0));
@@ -94,7 +97,6 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
             ->add(c_3);
 
     // LETTER N
-
     Entity * n_1 = (new Entity(cube))
             ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(0, 5, 0));
@@ -114,7 +116,6 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
             ->add(n_3);
 
     // LETTER M
-
     Entity * m_1 = (new Entity(cube))
             ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(0, 5, 0));
@@ -139,7 +140,6 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
             ->add(m_5);
 
     // LETTER I
-
     Entity * i_1 = (new Entity(cube))
         ->scale(vec3(0.7f, 7, 1))
         ->translate(vec3(0, 5.5f, 0));
@@ -147,9 +147,6 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
     EntityGroup * letter_i = (new EntityGroup())
             ->translate(vec3(25, 0, 0))
             ->add(i_1);
-
-
-    // Number 2 4 6 7 8
 
     // NUMBER 2
     Entity * nb2_1 = (new Entity(cube))
@@ -410,7 +407,6 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
     entityManager.add(stevenPosition);
     entityManager.add(steven2Position);
     entityManager.add(mahdi2Position);
-    entityManager.add(floor_g);
 
     delete letter_c;
     delete letter_i;
@@ -471,7 +467,7 @@ int main() {
 
 	EntityManager entityManager;
 
-    MeshLoader loader;
+    AssetLoader loader;
 
     // The array of models
     EntityGroup * models[5];
@@ -516,9 +512,6 @@ int main() {
         GLfloat delta_time = now - last_time;
 		last_time = now;
 
-        // Render entities
-        app_shader.use_shader();
-
 		// Get user input events
 		glfwPollEvents();
 
@@ -554,6 +547,9 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Render shadow maps
+		app_shader.use_shader();
+        glUniform1i(app_shader.get_use_texture_location(), true);
+        glUniform1i(app_shader.get_use_lighting_location(), true);
 		omni_shadow_map_pass(&omni_shadow_shader, &point_light);
 		shiny_material.use_material(app_shader.get_specular_intensity_location(), app_shader.get_shininess_location());
 		shadowRenderer.render(camera, entityManager);
@@ -561,7 +557,6 @@ int main() {
 		// End shadows
 
         entityRenderer.render(camera, entityManager);
-
         app_shader.set_point_light(point_light);
 
         glUniformMatrix4fv(app_shader.get_projection_location(), 1, GL_FALSE, glm::value_ptr(camera.calculate_projection()));
@@ -572,6 +567,8 @@ int main() {
                     camera.get_camera_position().z);
 
 		// Display the axis lines
+        glUniform1i(app_shader.get_use_texture_location(), false);
+        glUniform1i(app_shader.get_use_lighting_location(), false);
 		line.render();
 		line2.render();
 		line3.render();
