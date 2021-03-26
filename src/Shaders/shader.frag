@@ -113,7 +113,7 @@ void main()
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = 0.0;
 	vec3 halfwayDir = normalize(lightDir + viewDir);
-	spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
+	spec = pow(max(dot(normal, halfwayDir), material.specular_intensity), material.shininess);
 	vec3 specular = spec * point_light.base.color;
 
 	// calculate shadow
