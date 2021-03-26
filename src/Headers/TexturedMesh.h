@@ -20,4 +20,5 @@ public:
         return texture;
     }
 
+    inline void set_texture(const Texture* newTexture) { texture = newTexture; }
 };

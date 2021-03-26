@@ -39,7 +39,7 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
     const Mesh * cubeMesh = loader.load_mesh("cube.obj");
     const Texture * cubeTexture = loader.load_texture_2d("cube.png");
 
-    const TexturedMesh * cube = new TexturedMesh(cubeMesh, cubeTexture);
+    TexturedMesh * cube = new TexturedMesh(cubeMesh, cubeTexture);
 
     Entity * floor = (new Entity(cube))
             ->scale(vec3(180, 1, 180))
@@ -469,6 +469,40 @@ int main() {
 
     AssetLoader loader;
 
+    std::vector<const Texture*> slideShow
+    {
+        loader.load_texture_2d("Floor-Tiles.jpg"),
+        loader.load_texture_2d("Cloth-Texture.jpg"),
+        loader.load_texture_2d("cube.png"),
+        loader.load_texture_2d("Metal-Pillars.jpg"),
+        loader.load_texture_2d("Metal-Holder.jpg")
+    };
+    size_t currentSlideIndex{ 0u };
+    const Texture* currentSlide{ slideShow[currentSlideIndex] };
+    double slideShowTimer{ 0.0 };
+
+    Entity* floor = (new Entity(new TexturedMesh(loader.load_mesh("Floor.obj"), loader.load_texture_2d("Floor-Tiles.jpg"))));
+    Entity* stage = (new Entity(new TexturedMesh(loader.load_mesh("Stage.obj"), loader.load_texture_2d("Cloth-Texture.jpg"))));
+    Entity* screen = (new Entity(new TexturedMesh(loader.load_mesh("Screen.obj"), currentSlide)));
+    Entity* pillar1 = (new Entity(new TexturedMesh(loader.load_mesh("Pillar1.obj"), loader.load_texture_2d("Metal-Pillars.jpg"))));
+    Entity* pillar2 = (new Entity(new TexturedMesh(loader.load_mesh("Pillar2.obj"), loader.load_texture_2d("Metal-Pillars.jpg"))));
+    Entity* pillarAttach1 = (new Entity(new TexturedMesh(loader.load_mesh("Attach1.obj"), loader.load_texture_2d("Metal-Holder.jpg"))));
+    Entity* pillarAttach2 = (new Entity(new TexturedMesh(loader.load_mesh("Attach2.obj"), loader.load_texture_2d("Metal-Holder.jpg"))));
+    Entity* pillarAttach3 = (new Entity(new TexturedMesh(loader.load_mesh("Attach3.obj"), loader.load_texture_2d("Metal-Holder.jpg"))));
+    Entity* pillarAttach4 = (new Entity(new TexturedMesh(loader.load_mesh("Attach4.obj"), loader.load_texture_2d("Metal-Holder.jpg"))));
+    EntityGroup* environment = (new EntityGroup())
+        ->add(floor)
+        ->add(stage)
+        ->add(screen)
+        ->add(pillar1)
+        ->add(pillar2)
+        ->add(pillarAttach1)
+        ->add(pillarAttach2)
+        ->add(pillarAttach3)
+        ->add(pillarAttach4);
+
+    entityManager.add(environment);
+
     // The array of models
     EntityGroup * models[5];
     // The selected model
@@ -510,7 +544,21 @@ int main() {
 		// Calculate delta time to minimize speed differences on faster CPUs
 		GLfloat now = glfwGetTime();
         GLfloat delta_time = now - last_time;
+        slideShowTimer += delta_time;
 		last_time = now;
+
+        if (slideShowTimer >= 5.0)
+        {
+            screen->set_texture(slideShow[currentSlideIndex]);
+
+            // This is for circular iteration through the slide show
+            if (++currentSlideIndex >= slideShow.size())
+            {
+                currentSlideIndex = 0u;
+            }
+
+            slideShowTimer = 0.0;
+        }
 
 		// Get user input events
 		glfwPollEvents();

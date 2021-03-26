@@ -15,11 +15,11 @@ using glm::vec3;
 class Entity {
 
 private:
-    const TexturedMesh * mesh;
+    TexturedMesh * mesh;
     vec3 pos, rot, scaleXYZ;
 
 public:
-    Entity(const TexturedMesh * mesh);
+    Entity(TexturedMesh * mesh);
 
     Entity * translate(const vec3 & translation);
     Entity * rotate(const vec3 & rotation);
@@ -30,6 +30,8 @@ public:
     Entity * set_rotation(const vec3 & rotation);
     Entity * set_scale(const vec3 & scale);
     Entity * set_scale(float scale);
+
+    inline void set_texture(const Texture* newTexture) { mesh->set_texture(newTexture); }
 
     mat4 create_transform() const;
 

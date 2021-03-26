@@ -80,7 +80,7 @@ StyleCopReport.xml
 *_h.h
 *.ilk
 *.meta
-*.obj
+#*.obj These are used for model files
 *.iobj
 *.pch
 *.pdb

@@ -1,6 +1,6 @@
 #include "Entity.h"
 
-Entity::Entity(const TexturedMesh * mesh) :
+Entity::Entity(TexturedMesh * mesh) :
         mesh(mesh),
         pos(0, 0, 0),
         rot(0, 0, 0),

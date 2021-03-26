@@ -71,7 +71,7 @@ const Mesh * AssetLoader::load_mesh(const char * objFile) {
 
     std::string path = "assets/models/" + std::string(objFile);
 
-    const aiScene * scene = importer.ReadFile(path.c_str(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_FlipUVs);
+    const aiScene * scene = importer.ReadFile(path.c_str(), aiProcess_JoinIdenticalVertices | aiProcess_FlipUVs);
 
     if (scene->mNumMeshes <= 0)
         return nullptr;
