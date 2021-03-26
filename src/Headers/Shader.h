@@ -26,13 +26,13 @@ public:
     GLuint get_use_lighting_location() const { return uniform_use_lighting; };
 
 	// Lighting
-    GLuint get_eye_position_location() { return uniform_eye_position; };
-    GLuint get_specular_intensity_location() { return uniform_specular_intensity; };
-    GLuint get_shininess_location() { return uniform_shininess; };
+    GLuint get_eye_position_location() const { return uniform_eye_position; };
+    GLuint get_specular_intensity_location() const { return uniform_specular_intensity; };
+    GLuint get_shininess_location() const { return uniform_shininess; };
 
     // Shadow maps
-    GLuint get_omni_light_pos_location() { return uniform_omni_light_pos; };
-    GLuint get_far_plane_location() { return uniform_far_plane; };
+    GLuint get_omni_light_pos_location() const { return uniform_omni_light_pos; };
+    GLuint get_far_plane_location() const { return uniform_far_plane; };
 
     void set_point_light(PointLight p_lights) const;
     void set_light_matrices(std::vector<glm::mat4> light_matrices);

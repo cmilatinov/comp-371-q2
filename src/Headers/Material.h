@@ -8,7 +8,7 @@ public:
     Material();
     Material(GLfloat specular_intensity, GLfloat shininess);
 
-    void use_material(GLuint specular_intensity_location, GLuint shininess_location);
+    void use_material(GLuint specular_intensity_location, GLuint shininess_location) const;
     ~Material();
 
 private:

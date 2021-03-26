@@ -1,8 +1,9 @@
 #pragma once
 
-#include <stdio.h>
+#include <cstdio>
+#include <functional>
 
-#include <GL/glew.h>
+#include <gl/glew.h>
 #include <GLFW/glfw3.h>
 
 /* Container class for functionality related to the GLFW Window instance */
@@ -28,6 +29,11 @@ public:
 	bool should_close() { return glfwWindowShouldClose(main_window); }
 	void swap_buffers() { glfwSwapBuffers(main_window); }
 	GLFWwindow* get_instance() { return main_window;  };
+
+	inline void set_key_callback(std::function<void(int key, int code, int action, int mode)> callback) {
+        key_callback = callback;
+	}
+
 private:
 	// Store the instance of our GLFW window
 	GLFWwindow* main_window;
@@ -46,6 +52,8 @@ private:
 	bool initial_mouse_move;
 	// Set the callback handlers to be used by GLFW
 	void link_callbacks();
+
+    std::function<void(int key, int code, int action, int mode)> key_callback;
 
 	// Callback function to be called by GLFW on key press state changes
 	static void handle_keys(GLFWwindow* window, int key, int code, int action, int mode);

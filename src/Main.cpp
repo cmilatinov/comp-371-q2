@@ -438,7 +438,6 @@ void omni_shadow_map_pass(Shader * shader, PointLight * light)
     shader->set_light_matrices(light->calculate_light_transform());
 }
 
-
 int main() {
     // Window creation
     Window main_window(1024, 768);
@@ -455,11 +454,16 @@ int main() {
 	Shader app_shader(vertex_path, fragment_path);
 	Shader omni_shadow_shader(shadow_vertex_path, shadow_fragment_path, shadow_geometry_path);
 
+	// Toggle shadows
+	main_window.set_key_callback([&app_shader](int key, int code, int action, int mode) {
+	    if (key == GLFW_KEY_END && action == GLFW_RELEASE) {
+            app_shader.use_shader();
+            app_shader.toggle_shadows();
+        }
+    });
+
     // Light
     PointLight point_light = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(0.3f, 0.3f, 0.3f), 0.2f, 0.5f, glm::vec3(0.0, 30.0f, 0.0f), 1.0f, 0.14f, 0.07f);
-
-    // TODO Remove this eventually, this should be customizable for each entity group/mesh
-    Material shiny_material(0.9f, 16);
 
 	// Init entity renderer and manager, create necessary entities
 	EntityRenderer entityRenderer(app_shader);
@@ -469,27 +473,33 @@ int main() {
 
     AssetLoader loader;
 
+    // Load textures
+    const Texture * floorTexture = loader.load_texture_2d("Floor-Tiles.jpg");
+    const Texture * clothTexture = loader.load_texture_2d("Cloth-Texture.jpg");
+    const Texture * metalPillarTexture = loader.load_texture_2d("Metal-Pillars.jpg");
+    const Texture * metalHolderTexture = loader.load_texture_2d("Metal-Holder.jpg");
+
     std::vector<const Texture*> slideShow
-    {
-        loader.load_texture_2d("Floor-Tiles.jpg"),
-        loader.load_texture_2d("Cloth-Texture.jpg"),
-        loader.load_texture_2d("cube.png"),
-        loader.load_texture_2d("Metal-Pillars.jpg"),
-        loader.load_texture_2d("Metal-Holder.jpg")
-    };
+            {
+                    floorTexture,
+                    clothTexture,
+                    loader.load_texture_2d("cube.png"),
+                    metalPillarTexture,
+                    metalHolderTexture
+            };
     size_t currentSlideIndex{ 0u };
     const Texture* currentSlide{ slideShow[currentSlideIndex] };
     double slideShowTimer{ 0.0 };
 
-    Entity* floor = (new Entity(new TexturedMesh(loader.load_mesh("Floor.obj"), loader.load_texture_2d("Floor-Tiles.jpg"))));
-    Entity* stage = (new Entity(new TexturedMesh(loader.load_mesh("Stage.obj"), loader.load_texture_2d("Cloth-Texture.jpg"))));
+    Entity* floor = (new Entity(new TexturedMesh(loader.load_mesh("Floor.obj"), floorTexture)))->translate(vec3(0, -0.1f, 0));
+    Entity* stage = (new Entity(new TexturedMesh(loader.load_mesh("Stage.obj"), clothTexture)));
     Entity* screen = (new Entity(new TexturedMesh(loader.load_mesh("Screen.obj"), currentSlide)));
-    Entity* pillar1 = (new Entity(new TexturedMesh(loader.load_mesh("Pillar1.obj"), loader.load_texture_2d("Metal-Pillars.jpg"))));
-    Entity* pillar2 = (new Entity(new TexturedMesh(loader.load_mesh("Pillar2.obj"), loader.load_texture_2d("Metal-Pillars.jpg"))));
-    Entity* pillarAttach1 = (new Entity(new TexturedMesh(loader.load_mesh("Attach1.obj"), loader.load_texture_2d("Metal-Holder.jpg"))));
-    Entity* pillarAttach2 = (new Entity(new TexturedMesh(loader.load_mesh("Attach2.obj"), loader.load_texture_2d("Metal-Holder.jpg"))));
-    Entity* pillarAttach3 = (new Entity(new TexturedMesh(loader.load_mesh("Attach3.obj"), loader.load_texture_2d("Metal-Holder.jpg"))));
-    Entity* pillarAttach4 = (new Entity(new TexturedMesh(loader.load_mesh("Attach4.obj"), loader.load_texture_2d("Metal-Holder.jpg"))));
+    Entity* pillar1 = (new Entity(new TexturedMesh(loader.load_mesh("Pillar1.obj"), metalPillarTexture)));
+    Entity* pillar2 = (new Entity(new TexturedMesh(loader.load_mesh("Pillar2.obj"), metalPillarTexture)));
+    Entity* pillarAttach1 = (new Entity(new TexturedMesh(loader.load_mesh("Attach1.obj"), metalHolderTexture)));
+    Entity* pillarAttach2 = (new Entity(new TexturedMesh(loader.load_mesh("Attach2.obj"), metalHolderTexture)));
+    Entity* pillarAttach3 = (new Entity(new TexturedMesh(loader.load_mesh("Attach3.obj"), metalHolderTexture)));
+    Entity* pillarAttach4 = (new Entity(new TexturedMesh(loader.load_mesh("Attach4.obj"), metalHolderTexture)));
     EntityGroup* environment = (new EntityGroup())
         ->add(floor)
         ->add(stage)
@@ -583,10 +593,6 @@ int main() {
         {
             selectedModel = models[4];
         }
-        else if (keys[GLFW_KEY_INSERT])
-        {
-            app_shader.toggle_shadows();
-        }
 
 		camera.key_controls(main_window.get_keys(), delta_time, selectedModel);
 		camera.mouse_controls(main_window.get_x_change(), main_window.get_y_change(), main_window.get_mouse_buttons(), delta_time);
@@ -595,15 +601,14 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Render shadow maps
-		app_shader.use_shader();
-        glUniform1i(app_shader.get_use_texture_location(), true);
-        glUniform1i(app_shader.get_use_lighting_location(), true);
 		omni_shadow_map_pass(&omni_shadow_shader, &point_light);
-		shiny_material.use_material(app_shader.get_specular_intensity_location(), app_shader.get_shininess_location());
 		shadowRenderer.render(camera, entityManager);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		// End shadows
 
+        app_shader.use_shader();
+        glUniform1i(app_shader.get_use_texture_location(), true);
+        glUniform1i(app_shader.get_use_lighting_location(), true);
         entityRenderer.render(camera, entityManager);
         app_shader.set_point_light(point_light);
 

@@ -12,6 +12,7 @@ void EntityRenderer::render(const Camera & camera, const map<const TexturedMesh*
     for (const auto & entry : entities) {
         const Mesh * mesh = entry.first->get_mesh();
         const Texture * texture = entry.first->get_texture();
+        const Material * material = entry.first->get_material();
 
         // Bind VAO and enable attributes
         glBindVertexArray(mesh->get_vao());
@@ -22,6 +23,9 @@ void EntityRenderer::render(const Camera & camera, const map<const TexturedMesh*
 
         // Bind texture
         texture->bind_to_unit(0);
+
+        // Load material vars
+        material->use_material(shader.get_specular_intensity_location(), shader.get_shininess_location());
 
         // This for-loop can easily be instanced to reduce it to one render call
         for (const Entity * entity : entry.second) {
@@ -67,6 +71,7 @@ void EntityRenderer::render(const mat4 & parentTransform, const EntityGroup * gr
         for (const Entity * entity : groupEntities) {
             const Mesh * mesh = entity->get_mesh()->get_mesh();
             const Texture * texture = entity->get_mesh()->get_texture();
+            const Material * material = entity->get_mesh()->get_material();
 
             // Bind VAO and enable attributes
             glBindVertexArray(mesh->get_vao());
@@ -78,6 +83,8 @@ void EntityRenderer::render(const mat4 & parentTransform, const EntityGroup * gr
             // Bind texture
             texture->bind_to_unit(0);
 
+            // Load material vars
+            material->use_material(shader.get_specular_intensity_location(), shader.get_shininess_location());
 
             // Load model matrix then render
             mat4 transform = parentTransform * groupTransform * entity->create_transform();
