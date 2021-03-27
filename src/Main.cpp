@@ -1,4 +1,6 @@
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -12,13 +14,7 @@
 #include "AssetLoader.h"
 #include "EntityRenderer.h"
 #include "EntityManager.h"
-#include "Cube.h"
-#include "Material.h"
 #include "PointLight.h"
-
-#define PI 3.14159265358979f
-
-const float to_radians = PI / 180.0f;
 
 // When debugging, the code will execute from "out/build/x64-Debug/". That last folder will have the name of your configuration.
 // We need to go three levels back to the root directory and into "src" before we can see the "Shaders" folder.
@@ -454,14 +450,6 @@ int main() {
 	Shader app_shader(vertex_path, fragment_path);
 	Shader omni_shadow_shader(shadow_vertex_path, shadow_fragment_path, shadow_geometry_path);
 
-	// Toggle shadows
-	main_window.set_key_callback([&app_shader](int key, int code, int action, int mode) {
-	    if (key == GLFW_KEY_END && action == GLFW_RELEASE) {
-            app_shader.use_shader();
-            app_shader.toggle_shadows();
-        }
-    });
-
     // Light
     PointLight point_light = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(0.3f, 0.3f, 0.3f), 0.2f, 0.5f, glm::vec3(0.0, 30.0f, 0.0f), 1.0f, 0.14f, 0.07f);
 
@@ -546,6 +534,22 @@ int main() {
 
     // Set clear color to white
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+    // Key callback
+    std::srand(time(nullptr));
+    main_window.set_key_callback([&app_shader, selectedModel](int key, int code, int action, int mode) {
+        if (key == GLFW_KEY_END && action == GLFW_RELEASE) {
+            app_shader.use_shader();
+            app_shader.toggle_shadows();
+        } else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+            float x = 0, z = 0;
+            do {
+                x = (float) std::rand() / ((float) RAND_MAX / 128.0f) - 64.0f;
+                z = (float) std::rand() / ((float) RAND_MAX / 128.0f) - 64.0f;
+            } while (x > -38.0f && x < 38.0f && z > -70.0f && z < -30.0f);
+            selectedModel->set_translation(vec3(x, 0, z));
+        }
+    });
 
 	// Loop until window closed
     GLfloat last_time = 0;
