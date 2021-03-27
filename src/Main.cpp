@@ -36,29 +36,32 @@ static const char * shadow_fragment_path = "Shaders/omni_shadow_map.frag";
 static const char * shadow_geometry_path = "Shaders/omni_shadow_map.geom";
 
 void create_entities(AssetLoader & loader, EntityManager & entityManager, EntityGroup ** groups) {
-    const Mesh * cubeMesh = loader.load_mesh("cube.obj");
-    const Texture * cubeTexture = loader.load_texture_2d("cube.png");
+    const Mesh * cubeMesh_letter = loader.load_mesh("cube.obj");
+    const Texture * cubeTexture_letter = loader.load_texture_2d("Cardboard.jpg");
+    const Mesh* cubeMesh_digit = loader.load_mesh("cube.obj");
+    const Texture* cubeTexture_digit = loader.load_texture_2d("Metal-Finish.jpg");
 
-    TexturedMesh * cube = new TexturedMesh(cubeMesh, cubeTexture);
+    TexturedMesh * cube_letter = new TexturedMesh(cubeMesh_letter, cubeTexture_letter);
+    TexturedMesh* cube_digit = new TexturedMesh(cubeMesh_digit, cubeTexture_digit);
 
     // LETTER S
-    Entity * s_1 = (new Entity(cube))
+    Entity * s_1 = (new Entity(cube_letter))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(2, 2.5f, 0));
 
-    Entity * s_2 = (new Entity(cube))
+    Entity * s_2 = (new Entity(cube_letter))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(2, 5.5f, 0));
 
-    Entity * s_3 = (new Entity(cube))
+    Entity * s_3 = (new Entity(cube_letter))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(2, 8.5f, 0));
 
-    Entity * s_4 = (new Entity(cube))
+    Entity * s_4 = (new Entity(cube_letter))
             ->scale(vec3(0.6f, 2, 1))
             ->translate(vec3(3.25f, 4, 0));
 
-    Entity * s_5 = (new Entity(cube))
+    Entity * s_5 = (new Entity(cube_letter))
             ->scale(vec3(0.6f, 2, 1))
             ->translate(vec3(0.75f, 7, 0));
 
@@ -71,15 +74,15 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
 
     // LETTER C
 
-    Entity * c_1 = (new Entity(cube))
+    Entity * c_1 = (new Entity(cube_letter))
             ->scale(vec3(0.7f, 5, 1))
             ->translate(vec3(0, 5.5f, 0));
 
-    Entity * c_2 = (new Entity(cube))
+    Entity * c_2 = (new Entity(cube_letter))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(1.25f, 2.5f, 0));
 
-    Entity * c_3 = (new Entity(cube))
+    Entity * c_3 = (new Entity(cube_letter))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(1.25f, 8.5f, 0));
 
@@ -90,15 +93,15 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
             ->add(c_3);
 
     // LETTER N
-    Entity * n_1 = (new Entity(cube))
+    Entity * n_1 = (new Entity(cube_letter))
             ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(0, 5, 0));
 
-    Entity * n_2 = (new Entity(cube))
+    Entity * n_2 = (new Entity(cube_letter))
             ->scale(vec3(3, 1, 1))
             ->translate(vec3(1.5f, 8.5f, 0));
 
-    Entity * n_3 = (new Entity(cube))
+    Entity * n_3 = (new Entity(cube_letter))
             ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(3, 5, 0));
 
@@ -109,19 +112,19 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
             ->add(n_3);
 
     // LETTER M
-    Entity * m_1 = (new Entity(cube))
+    Entity * m_1 = (new Entity(cube_letter))
             ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(0, 5, 0));
 
-    Entity * m_2 = (new Entity(cube))
+    Entity * m_2 = (new Entity(cube_letter))
             ->scale(vec3(6, 1, 1))
             ->translate(vec3(3, 8.5f, 0));
 
-    Entity * m_3 = (new Entity(cube))
+    Entity * m_3 = (new Entity(cube_letter))
             ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(3, 5, 0));
 
-    Entity * m_5 = (new Entity(cube))
+    Entity * m_5 = (new Entity(cube_letter))
             ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(6, 5, 0));
 
@@ -133,7 +136,7 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
             ->add(m_5);
 
     // LETTER I
-    Entity * i_1 = (new Entity(cube))
+    Entity * i_1 = (new Entity(cube_letter))
         ->scale(vec3(0.7f, 7, 1))
         ->translate(vec3(0, 5.5f, 0));
 
@@ -142,23 +145,23 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
             ->add(i_1);
 
     // NUMBER 2
-    Entity * nb2_1 = (new Entity(cube))
+    Entity * nb2_1 = (new Entity(cube_digit))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(0, 2.5f, 0));
 
-    Entity * nb2_2 = (new Entity(cube))
+    Entity * nb2_2 = (new Entity(cube_digit))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(0, 5.5f, 0));
 
-    Entity * nb2_3 = (new Entity(cube))
+    Entity * nb2_3 = (new Entity(cube_digit))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(0, 8.5f, 0));
 
-    Entity * nb2_4 = (new Entity(cube))
+    Entity * nb2_4 = (new Entity(cube_digit))
             ->scale(vec3(0.6f, 2, 1))
             ->translate(vec3(1.25f, 7, 0));
 
-    Entity * nb2_5 = (new Entity(cube))
+    Entity * nb2_5 = (new Entity(cube_digit))
             ->scale(vec3(0.6f, 2, 1))
             ->translate(vec3(-1.25f, 4, 0));
 
@@ -171,16 +174,16 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
             ->add(nb2_5);
 
     // NUMBER 4
-    Entity * nb4_1 = (new Entity(cube))
+    Entity * nb4_1 = (new Entity(cube_digit))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(0, 5.5f, 0));
 
 
-    Entity * nb4_3 = (new Entity(cube))
+    Entity * nb4_3 = (new Entity(cube_digit))
             ->scale(vec3(0.6f, 7, 1))
             ->translate(vec3(1.25f, 5.5f, 0));
 
-    Entity * nb4_4 = (new Entity(cube))
+    Entity * nb4_4 = (new Entity(cube_digit))
             ->scale(vec3(0.6f, 3.5f, 1))
             ->translate(vec3(-1.25f, 7.25f, 0));
 
@@ -191,23 +194,23 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
             ->add(nb4_4);
 
     // NUMBER 6
-    Entity * nb6_1 = (new Entity(cube))
+    Entity * nb6_1 = (new Entity(cube_digit))
             ->scale(vec3(0.7f, 5, 1))
             ->translate(vec3(0, 5.5f, 0));
 
-    Entity * nb6_2 = (new Entity(cube))
+    Entity * nb6_2 = (new Entity(cube_digit))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(1.25f, 2.5f, 0));
 
-    Entity * nb6_3 = (new Entity(cube))
+    Entity * nb6_3 = (new Entity(cube_digit))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(1.25f, 5.5f, 0));
 
-    Entity * nb6_4 = (new Entity(cube))
+    Entity * nb6_4 = (new Entity(cube_digit))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(1.25f, 8.5f, 0));
 
-    Entity * nb6_5 = (new Entity(cube))
+    Entity * nb6_5 = (new Entity(cube_digit))
             ->scale(vec3(0.6f, 2, 1))
             ->translate(vec3(2.5f, 4, 0));
 
@@ -220,12 +223,12 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
             ->add(nb6_5);
 
     // NUMBER 7
-    Entity * nb7_1 = (new Entity(cube))
+    Entity * nb7_1 = (new Entity(cube_digit))
             ->scale(vec3(0.6f, 6.5f, 1))
             ->translate(vec3(1.5f, 5, 0))
             ->rotate(vec3(0, 0, -20));
 
-    Entity * nb7_2 = (new Entity(cube))
+    Entity * nb7_2 = (new Entity(cube_digit))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(1.25f, 8.5f, 0));
 
@@ -235,31 +238,31 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
             ->add(nb7_2);
 
     // NUMBER 8
-    Entity * nb8_1 = (new Entity(cube))
+    Entity * nb8_1 = (new Entity(cube_digit))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(1.25f, 2.5f, 0));
 
-    Entity * nb8_2 = (new Entity(cube))
+    Entity * nb8_2 = (new Entity(cube_digit))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(1.25f, 5.5f, 0));
 
-    Entity * nb8_3 = (new Entity(cube))
+    Entity * nb8_3 = (new Entity(cube_digit))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(1.25f, 8.5f, 0));
 
-    Entity * nb8_4 = (new Entity(cube))
+    Entity * nb8_4 = (new Entity(cube_digit))
             ->scale(vec3(0.6f, 2, 1))
             ->translate(vec3(2.5f, 4, 0));
 
-    Entity * nb8_5 = (new Entity(cube))
+    Entity * nb8_5 = (new Entity(cube_digit))
             ->scale(vec3(0.6f, 2, 1))
             ->translate(vec3(2.5f, 7, 0));
 
-    Entity * nb8_6 = (new Entity(cube))
+    Entity * nb8_6 = (new Entity(cube_digit))
             ->scale(vec3(0.6f, 2, 1))
             ->translate(vec3(0, 4, 0));
 
-    Entity * nb8_7 = (new Entity(cube))
+    Entity * nb8_7 = (new Entity(cube_digit))
             ->scale(vec3(0.6f, 2, 1))
             ->translate(vec3(0, 7, 0));
 
