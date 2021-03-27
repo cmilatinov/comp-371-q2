@@ -537,17 +537,20 @@ int main() {
 
     // Key callback
     std::srand(time(nullptr));
-    main_window.set_key_callback([&app_shader, selectedModel](int key, int code, int action, int mode) {
+    bool textureToggle = true;
+    main_window.set_key_callback([&app_shader, selectedModel, &textureToggle](int key, int code, int action, int mode) {
         if (key == GLFW_KEY_END && action == GLFW_RELEASE) {
             app_shader.use_shader();
             app_shader.toggle_shadows();
-        } else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+        } else if (key == GLFW_KEY_R && action == GLFW_RELEASE) {
             float x = 0, z = 0;
             do {
                 x = (float) std::rand() / ((float) RAND_MAX / 128.0f) - 64.0f;
                 z = (float) std::rand() / ((float) RAND_MAX / 128.0f) - 64.0f;
             } while (x > -38.0f && x < 38.0f && z > -70.0f && z < -30.0f);
             selectedModel->set_translation(vec3(x, 0, z));
+        } else if (key == GLFW_KEY_X && action == GLFW_RELEASE) {
+            textureToggle = !textureToggle;
         }
     });
 
@@ -611,8 +614,8 @@ int main() {
 		// End shadows
 
         app_shader.use_shader();
-        glUniform1i(app_shader.get_use_texture_location(), true);
-        glUniform1i(app_shader.get_use_lighting_location(), true);
+        glUniform1i(app_shader.get_use_texture_location(), textureToggle);
+        glUniform1i(app_shader.get_use_lighting_location(), textureToggle);
         entityRenderer.render(camera, entityManager);
         app_shader.set_point_light(point_light);
 
