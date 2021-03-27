@@ -6,13 +6,15 @@
 
 using std::vector;
 using glm::mat4;
+using glm::mat3x2;
 using glm::vec3;
+using glm::vec2;
 
 class EntityGroup {
 
 private:
-    const Mesh * mesh = nullptr;
     vec3 pos, rot, scaleXYZ;
+    mat3x2 shear;
     vector<const Entity*> entities;
     vector<const EntityGroup*> childrenGroups;
 
@@ -30,17 +32,19 @@ public:
     EntityGroup * rotate(const vec3 & rotation);
     EntityGroup * scale(const vec3 & scale);
     EntityGroup * scale(float scale);
+    EntityGroup * shearX(const vec2 & shear);
+    EntityGroup * shearY(const vec2 & shear);
+    EntityGroup * shearZ(const vec2 & shear);
 
     EntityGroup * set_translation(const vec3 & translation);
     EntityGroup * set_rotation(const vec3 & rotation);
     EntityGroup * set_scale(const vec3 & scale);
     EntityGroup * set_scale(float scale);
+    EntityGroup * set_shearX(const vec2 & shear);
+    EntityGroup * set_shearY(const vec2 & shear);
+    EntityGroup * set_shearZ(const vec2 & shear);
 
     mat4 create_transform() const;
-
-    inline const Mesh * get_mesh() const {
-        return mesh;
-    }
 
     inline const vector<const Entity*> & get_entities() const {
         return entities;

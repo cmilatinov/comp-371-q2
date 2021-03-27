@@ -158,6 +158,15 @@ void Camera::key_controls(bool* keys, GLfloat delta_time, EntityGroup* const sel
 	{
 		selectedModel->rotate(glm::vec3(0.f, -.5f, 0.f));
 	}
+    // SHEAR LEFT/RIGHT
+    if (keys[GLFW_KEY_COMMA])
+    {
+        selectedModel->shearY(vec2(-0.01f, 0));
+    }
+    else if (keys[GLFW_KEY_PERIOD])
+    {
+        selectedModel->shearY(vec2(0.01f, 0));
+    }
 	// [ - Toggle cursor lock
 	if (keys[GLFW_KEY_LEFT_BRACKET])
 	{

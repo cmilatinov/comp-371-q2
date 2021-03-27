@@ -1,4 +1,6 @@
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -9,14 +11,10 @@
 #include "Camera.h"
 #include "Line.h"
 #include "Grid.h"
-#include "MeshLoader.h"
+#include "AssetLoader.h"
 #include "EntityRenderer.h"
 #include "EntityManager.h"
-#include "Cube.h"
-
-#define PI 3.14159265358979f
-
-const float to_radians = PI / 180.0f;
+#include "PointLight.h"
 
 // When debugging, the code will execute from "out/build/x64-Debug/". That last folder will have the name of your configuration.
 // We need to go three levels back to the root directory and into "src" before we can see the "Shaders" folder.
@@ -26,11 +24,27 @@ static const char * vertex_path = "Shaders/shader.vert";
 // Fragment Shader file path
 static const char * fragment_path = "Shaders/shader.frag";
 
-void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityGroup ** groups) {
-    const Mesh * cube = loader.create_mesh(CUBE_VERTEX_ARRAY, sizeof(CUBE_VERTEX_ARRAY) / sizeof(glm::vec3));
+// Shadow Map Shader vertex file path
+static const char * shadow_vertex_path = "Shaders/omni_shadow_map.vert";
+// Shadow Map Shader fragment file path
+static const char * shadow_fragment_path = "Shaders/omni_shadow_map.frag";
+// Shadow Map Shader geometry file path
+static const char * shadow_geometry_path = "Shaders/omni_shadow_map.geom";
+
+void create_entities(AssetLoader & loader, EntityManager & entityManager, EntityGroup ** groups) {
+    const Mesh * cubeMesh = loader.load_mesh("cube.obj");
+    const Texture * cubeTexture = loader.load_texture_2d("cube.png");
+
+    TexturedMesh * cube = new TexturedMesh(cubeMesh, cubeTexture);
+
+    Entity * floor = (new Entity(cube))
+            ->scale(vec3(180, 1, 180))
+            ->translate(vec3(0, -2.0f, 0));
+
+    entityManager.add(floor);
+
 
     // LETTER S
-
     Entity * s_1 = (new Entity(cube))
             ->scale(vec3(2.5f, 1, 1))
             ->translate(vec3(2, 2.5f, 0));
@@ -79,7 +93,6 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
             ->add(c_3);
 
     // LETTER N
-
     Entity * n_1 = (new Entity(cube))
             ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(0, 5, 0));
@@ -99,7 +112,6 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
             ->add(n_3);
 
     // LETTER M
-
     Entity * m_1 = (new Entity(cube))
             ->scale(vec3(0.7f, 6, 1))
             ->translate(vec3(0, 5, 0));
@@ -124,7 +136,6 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
             ->add(m_5);
 
     // LETTER I
-
     Entity * i_1 = (new Entity(cube))
         ->scale(vec3(0.7f, 7, 1))
         ->translate(vec3(0, 5.5f, 0));
@@ -132,9 +143,6 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
     EntityGroup * letter_i = (new EntityGroup())
             ->translate(vec3(25, 0, 0))
             ->add(i_1);
-
-
-    // Number 2 4 6 7 8
 
     // NUMBER 2
     Entity * nb2_1 = (new Entity(cube))
@@ -409,6 +417,22 @@ void create_entities(MeshLoader & loader, EntityManager & entityManager, EntityG
 
 }
 
+void omni_shadow_map_pass(Shader * shader, PointLight * light)
+{
+    shader->use_shader();
+
+    glViewport(0, 0, light->get_shadow_map()->get_shadow_width(), light->get_shadow_map()->get_shadow_height());
+
+    light->get_shadow_map()->write();
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    GLuint uniform_far_plane = shader->get_far_plane_location();
+    GLuint uniform_light_pos = shader->get_omni_light_pos_location();
+
+    glUniform3f(uniform_light_pos, light->get_position().x, light->get_position().y, light->get_position().z);
+    glUniform1f(uniform_far_plane, light->get_far_plane());
+    shader->set_light_matrices(light->calculate_light_transform());
+}
 
 int main() {
     // Window creation
@@ -422,16 +446,60 @@ int main() {
     // Creates the camera, used as an abstraction to calculate the view matrix
     Camera camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.2f, &main_window);
 
-    // Load shader program
+    // Load shader programs
 	Shader app_shader(vertex_path, fragment_path);
+	Shader omni_shadow_shader(shadow_vertex_path, shadow_fragment_path, shadow_geometry_path);
 
-    // Use the loaded shader
-    app_shader.use_shader();	
+    // Light
+    PointLight point_light = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(0.3f, 0.3f, 0.3f), 0.2f, 0.5f, glm::vec3(0.0, 30.0f, 0.0f), 1.0f, 0.14f, 0.07f);
 
 	// Init entity renderer and manager, create necessary entities
 	EntityRenderer entityRenderer(app_shader);
+    EntityRenderer shadowRenderer(omni_shadow_shader);
+
 	EntityManager entityManager;
-    MeshLoader loader;
+
+    AssetLoader loader;
+
+    // Load textures
+    const Texture * floorTexture = loader.load_texture_2d("Floor-Tiles.jpg");
+    const Texture * clothTexture = loader.load_texture_2d("Cloth-Texture.jpg");
+    const Texture * metalPillarTexture = loader.load_texture_2d("Metal-Pillars.jpg");
+    const Texture * metalHolderTexture = loader.load_texture_2d("Metal-Holder.jpg");
+
+    std::vector<const Texture*> slideShow
+            {
+                    floorTexture,
+                    clothTexture,
+                    loader.load_texture_2d("cube.png"),
+                    metalPillarTexture,
+                    metalHolderTexture
+            };
+    size_t currentSlideIndex{ 0u };
+    const Texture* currentSlide{ slideShow[currentSlideIndex] };
+    double slideShowTimer{ 0.0 };
+
+    Entity* floor = (new Entity(new TexturedMesh(loader.load_mesh("Floor.obj"), floorTexture)))->translate(vec3(0, -0.1f, 0));
+    Entity* stage = (new Entity(new TexturedMesh(loader.load_mesh("Stage.obj"), clothTexture)));
+    Entity* screen = (new Entity(new TexturedMesh(loader.load_mesh("Screen.obj"), currentSlide)));
+    Entity* pillar1 = (new Entity(new TexturedMesh(loader.load_mesh("Pillar1.obj"), metalPillarTexture)));
+    Entity* pillar2 = (new Entity(new TexturedMesh(loader.load_mesh("Pillar2.obj"), metalPillarTexture)));
+    Entity* pillarAttach1 = (new Entity(new TexturedMesh(loader.load_mesh("Attach1.obj"), metalHolderTexture)));
+    Entity* pillarAttach2 = (new Entity(new TexturedMesh(loader.load_mesh("Attach2.obj"), metalHolderTexture)));
+    Entity* pillarAttach3 = (new Entity(new TexturedMesh(loader.load_mesh("Attach3.obj"), metalHolderTexture)));
+    Entity* pillarAttach4 = (new Entity(new TexturedMesh(loader.load_mesh("Attach4.obj"), metalHolderTexture)));
+    EntityGroup* environment = (new EntityGroup())
+        ->add(floor)
+        ->add(stage)
+        ->add(screen)
+        ->add(pillar1)
+        ->add(pillar2)
+        ->add(pillarAttach1)
+        ->add(pillarAttach2)
+        ->add(pillarAttach3)
+        ->add(pillarAttach4);
+
+    entityManager.add(environment);
 
     // The array of models
     EntityGroup * models[5];
@@ -465,7 +533,26 @@ int main() {
     glEnable(GL_CULL_FACE);
 
     // Set clear color to white
-    glClearColor(1, 1, 1, 1);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+    // Key callback
+    std::srand(time(nullptr));
+    bool textureToggle = true;
+    main_window.set_key_callback([&app_shader, selectedModel, &textureToggle](int key, int code, int action, int mode) {
+        if (key == GLFW_KEY_END && action == GLFW_RELEASE) {
+            app_shader.use_shader();
+            app_shader.toggle_shadows();
+        } else if (key == GLFW_KEY_R && action == GLFW_RELEASE) {
+            float x = 0, z = 0;
+            do {
+                x = (float) std::rand() / ((float) RAND_MAX / 128.0f) - 64.0f;
+                z = (float) std::rand() / ((float) RAND_MAX / 128.0f) - 64.0f;
+            } while (x > -38.0f && x < 38.0f && z > -70.0f && z < -30.0f);
+            selectedModel->set_translation(vec3(x, 0, z));
+        } else if (key == GLFW_KEY_X && action == GLFW_RELEASE) {
+            textureToggle = !textureToggle;
+        }
+    });
 
 	// Loop until window closed
     GLfloat last_time = 0;
@@ -474,9 +561,22 @@ int main() {
 		// Calculate delta time to minimize speed differences on faster CPUs
 		GLfloat now = glfwGetTime();
         GLfloat delta_time = now - last_time;
+        slideShowTimer += delta_time;
 		last_time = now;
 
-		
+        if (slideShowTimer >= 5.0)
+        {
+            screen->set_texture(slideShow[currentSlideIndex]);
+
+            // This is for circular iteration through the slide show
+            if (++currentSlideIndex >= slideShow.size())
+            {
+                currentSlideIndex = 0u;
+            }
+
+            slideShowTimer = 0.0;
+        }
+
 		// Get user input events
 		glfwPollEvents();
 
@@ -507,13 +607,28 @@ int main() {
 		// Clear window
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Render entities
+		// Render shadow maps
+		omni_shadow_map_pass(&omni_shadow_shader, &point_light);
+		shadowRenderer.render(camera, entityManager);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// End shadows
+
+        app_shader.use_shader();
+        glUniform1i(app_shader.get_use_texture_location(), textureToggle);
+        glUniform1i(app_shader.get_use_lighting_location(), textureToggle);
         entityRenderer.render(camera, entityManager);
+        app_shader.set_point_light(point_light);
 
         glUniformMatrix4fv(app_shader.get_projection_location(), 1, GL_FALSE, glm::value_ptr(camera.calculate_projection()));
         glUniformMatrix4fv(app_shader.get_model_location(), 1, GL_FALSE, glm::value_ptr(mat4(1.0f)));
+        glUniform3f(app_shader.get_eye_position_location(),
+                    camera.get_camera_position().x,
+                    camera.get_camera_position().y,
+                    camera.get_camera_position().z);
 
 		// Display the axis lines
+        glUniform1i(app_shader.get_use_texture_location(), false);
+        glUniform1i(app_shader.get_use_lighting_location(), false);
 		line.render();
 		line2.render();
 		line3.render();

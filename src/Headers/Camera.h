@@ -17,7 +17,9 @@ public:
 	Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLfloat move_speed, GLfloat turn_speed, Window* window);
 
 	void key_controls(bool* keys, GLfloat delta_time, EntityGroup* const selectedModel);
-	void mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_buttons, GLfloat delta_time);	
+	void mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_buttons, GLfloat delta_time);
+
+	glm::vec3 get_camera_position() { return position; }
 
 	glm::mat4 calculate_view_matrix() const;
 	glm::mat4 calculate_projection();

@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Mesh.h"
+#include "TexturedMesh.h"
 
 using glm::mat4;
 using glm::vec3;
@@ -15,11 +15,11 @@ using glm::vec3;
 class Entity {
 
 private:
-    const Mesh * mesh;
+    TexturedMesh * mesh;
     vec3 pos, rot, scaleXYZ;
 
 public:
-    Entity(const Mesh * mesh);
+    Entity(TexturedMesh * mesh);
 
     Entity * translate(const vec3 & translation);
     Entity * rotate(const vec3 & rotation);
@@ -31,9 +31,11 @@ public:
     Entity * set_scale(const vec3 & scale);
     Entity * set_scale(float scale);
 
+    inline void set_texture(const Texture* newTexture) { mesh->set_texture(newTexture); }
+
     mat4 create_transform() const;
 
-    inline const Mesh * get_mesh() const {
+    inline const TexturedMesh * get_mesh() const {
         return mesh;
     }
 

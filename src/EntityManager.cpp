@@ -21,7 +21,7 @@ void EntityManager::add(const Entity * entity) {
 void EntityManager::remove(const Entity * entity) {
     if (entity == nullptr)
         return;
-    const Mesh * mesh = entity->get_mesh();
+    const TexturedMesh * mesh = entity->get_mesh();
     for (auto it = entities[mesh].begin(); it != entities[mesh].end(); ++it) {
         if (*it == entity) {
             entities[mesh].erase(it);

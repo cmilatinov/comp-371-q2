@@ -86,7 +86,7 @@ void Window::link_callbacks()
 	glfwSetMouseButtonCallback(main_window, handle_mouse_buttons);
 }
 
-void Window::handle_keys(GLFWwindow* window, int key, int code, int action, int mode)
+void Window::handle_keys(GLFWwindow* window, int key, int code, int action, int mods)
 {
 	// Our Window class callback function is static so we cast to get an instance of our class
 	Window* window_instance = static_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -121,6 +121,8 @@ void Window::handle_keys(GLFWwindow* window, int key, int code, int action, int 
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
+
+    window_instance->key_callback(key, code, action, mods);
 }
 
 void Window::handle_mouse_movement(GLFWwindow* window, double x_pos, double y_pos)
