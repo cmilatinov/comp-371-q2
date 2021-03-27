@@ -543,10 +543,13 @@ int main() {
     // Set clear color to white
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
+    // For getting back the control of the mouse during runtime
+    bool cursor_enabled = false;
+
     // Key callback
     std::srand(time(nullptr));
     bool textureToggle = true;
-    main_window.set_key_callback([&app_shader, selectedModel, &textureToggle](int key, int code, int action, int mode) {
+    main_window.set_key_callback([&app_shader, selectedModel, &textureToggle, &main_window, &cursor_enabled](int key, int code, int action, int mode) {
         if (key == GLFW_KEY_END && action == GLFW_RELEASE) {
             app_shader.use_shader();
             app_shader.toggle_shadows();
@@ -563,6 +566,11 @@ int main() {
             selectedModel->shearY(vec2(-0.1f, 0));
         } else if (key == GLFW_KEY_APOSTROPHE && action == GLFW_RELEASE) {
             selectedModel->shearY(vec2(0.1f, 0));
+        }// [ - Toggle cursor lock
+        else if (key == GLFW_KEY_LEFT_BRACKET && action == GLFW_RELEASE)
+        {
+            glfwSetInputMode(main_window.get_instance(), GLFW_CURSOR, cursor_enabled ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+            cursor_enabled = !cursor_enabled;
         }
     });
 
