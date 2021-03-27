@@ -38,15 +38,15 @@
 - `Left Mouse Button` will make all vertical mouse movements a zoom in/out of the scene.
 - `Z` will reset the zoom to its default value.
 - `1 to 5` will select a model on the map. Default is `0`, which is the model at the center.
-	- `I` will scale the model up.
-	- `K` will scale the model down.
+	- `I` will scale the model up by 5% of its current size.
+	- `K` will scale the model down by 5% of its current size.
 	- `Y` will move the model along `x`.
 	- `H` will move the model along `-x`.
 	- `G` will move the model along `z`.
 	- `J` will move the model along `-z`.
 	- `F` will move the model along `y`.
 	- `V` will move the model along `-y`.
-	- `B` & `N` will rotate the model on its `y`.
+	- `B` & `N` will rotate the model on its `y` by 0.5 degrees.
 - `Mouse Button 4` will make mouse movements move the camera only along its `x-axis` and `y-axis` plane.
 - `Middle Mouse Button` will make all vertical mouse movements change the camera's pitch.
 - `Left Mouse Button` will make all horizontal mouse movements change the camera's yaw.
