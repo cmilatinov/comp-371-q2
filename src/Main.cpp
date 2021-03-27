@@ -555,7 +555,7 @@ int main() {
             do {
                 x = (float) std::rand() / ((float) RAND_MAX / 128.0f) - 64.0f;
                 z = (float) std::rand() / ((float) RAND_MAX / 128.0f) - 64.0f;
-            } while (x > -38.0f && x < 38.0f && z > -70.0f && z < -30.0f);
+            } while (x > -38.0f && x < 38.0f && z > -40.0f && z < 0.0f);
             selectedModel->set_translation(vec3(x, 0, z));
         } else if (key == GLFW_KEY_X && action == GLFW_RELEASE) {
             textureToggle = !textureToggle;
