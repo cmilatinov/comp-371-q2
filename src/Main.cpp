@@ -38,7 +38,7 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
     const Texture* cubeTexture_digit = loader.load_texture_2d("Metal-Finish.jpg");
 
     TexturedMesh * cube_letter = new TexturedMesh(cubeMesh_letter, cubeTexture_letter);
-    TexturedMesh* cube_digit = new TexturedMesh(cubeMesh_digit, cubeTexture_digit);
+    TexturedMesh* cube_digit = new TexturedMesh(cubeMesh_digit, cubeTexture_digit, new Material(3.0f, 30.0f));
 
     // LETTER S
     Entity * s_1 = (new Entity(cube_letter))
