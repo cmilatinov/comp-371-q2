@@ -49,7 +49,7 @@
 	- `B` & `N` will rotate the model on its `y` by 0.5 degrees.
 	- `R` to randomly position the model on the grid
 	- `,` and `.` to shear the model continuously
-	- `;` and `'` to shear the model incrementally
+	- `;` and `'` to shear the model by an increment of 0.1 units
 - `Mouse Button 4` will make mouse movements move the camera only along its `x-axis` and `y-axis` plane.
 - `Middle Mouse Button` will make all vertical mouse movements change the camera's pitch.
 - `Left Mouse Button` will make all horizontal mouse movements change the camera's yaw.
