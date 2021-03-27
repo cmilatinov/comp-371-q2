@@ -47,7 +47,11 @@
 	- `F` will move the model along `y`.
 	- `V` will move the model along `-y`.
 	- `B` & `N` will rotate the model on its `y` by 0.5 degrees.
+	- `R` to randomly position the model on the grid
+	- `,` and `.` to shear the model continuously
+	- `;` and `'` to shear the model incrementally
 - `Mouse Button 4` will make mouse movements move the camera only along its `x-axis` and `y-axis` plane.
 - `Middle Mouse Button` will make all vertical mouse movements change the camera's pitch.
 - `Left Mouse Button` will make all horizontal mouse movements change the camera's yaw.
 - `[` will unlock the mouse cursor from the window.
+- `X` will toggle the textures on and off of all the models
