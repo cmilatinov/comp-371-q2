@@ -572,6 +572,15 @@ int main() {
             glfwSetInputMode(main_window.get_instance(), GLFW_CURSOR, cursor_enabled ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
             cursor_enabled = !cursor_enabled;
         }
+        // SCALE
+        else if (key == GLFW_KEY_I && action == GLFW_RELEASE)
+        {
+            selectedModel->scale(1.05f);
+        }
+        else if (key == GLFW_KEY_K && action == GLFW_RELEASE)
+        {
+            selectedModel->scale(0.95);
+        }
     });
 
 	// Loop until window closed

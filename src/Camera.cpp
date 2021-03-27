@@ -113,15 +113,6 @@ void Camera::key_controls(bool* keys, GLfloat delta_time, EntityGroup* const sel
 	
 	// Model transformation below \\
 
-	// SCALE
-	if (keys[GLFW_KEY_I])
-	{
-		selectedModel->scale(1.01f);
-	}
-	else if (keys[GLFW_KEY_K])
-	{
-		selectedModel->scale(0.99);
-	}
 	// MOVE FORWARD/BACKWARD
 	if (keys[GLFW_KEY_Y])
 	{
