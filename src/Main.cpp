@@ -41,13 +41,6 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
 
     TexturedMesh * cube = new TexturedMesh(cubeMesh, cubeTexture);
 
-    Entity * floor = (new Entity(cube))
-            ->scale(vec3(180, 1, 180))
-            ->translate(vec3(0, -2.0f, 0));
-
-    entityManager.add(floor);
-
-
     // LETTER S
     Entity * s_1 = (new Entity(cube))
             ->scale(vec3(2.5f, 1, 1))
@@ -473,6 +466,10 @@ int main() {
 
     AssetLoader loader;
 
+    // Specifies the alignment requirements for the start of each pixel row in memory. The allowable values are 1 (byte-alignment), 2 (rows aligned to even-numbered bytes), 4 (word-alignment), and 8 (rows start on double-word boundaries).
+    // I think we have to use 1 because our data is held in an array of 1 byte unsigned char type
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
     // Load textures
     const Texture * floorTexture = loader.load_texture_2d("Floor-Tiles.jpg");
     const Texture * clothTexture = loader.load_texture_2d("Cloth-Texture.jpg");
@@ -480,20 +477,20 @@ int main() {
     const Texture * metalHolderTexture = loader.load_texture_2d("Metal-Holder.jpg");
 
     std::vector<const Texture*> slideShow
-            {
-                    floorTexture,
-                    clothTexture,
-                    loader.load_texture_2d("cube.png"),
-                    metalPillarTexture,
-                    metalHolderTexture
-            };
+    {
+        loader.load_texture_2d("CN47_Screenshot.png"),
+        loader.load_texture_2d("MI26_Screenshot.png"),
+        loader.load_texture_2d("SN48_Screenshot.png")
+    };
     size_t currentSlideIndex{ 0u };
     const Texture* currentSlide{ slideShow[currentSlideIndex] };
     double slideShowTimer{ 0.0 };
 
-    Entity* floor = (new Entity(new TexturedMesh(loader.load_mesh("Floor.obj"), floorTexture)))->translate(vec3(0, -0.1f, 0));
+    Entity* floor = (new Entity(new TexturedMesh(loader.load_mesh("Floor.obj"), floorTexture)));
+    Entity* floor_back = (new Entity(new TexturedMesh(loader.load_mesh("Floor_back.obj"), floorTexture)));
     Entity* stage = (new Entity(new TexturedMesh(loader.load_mesh("Stage.obj"), clothTexture)));
     Entity* screen = (new Entity(new TexturedMesh(loader.load_mesh("Screen.obj"), currentSlide)));
+    Entity* screen_back = (new Entity(new TexturedMesh(loader.load_mesh("Screen_back.obj"), metalHolderTexture)));
     Entity* pillar1 = (new Entity(new TexturedMesh(loader.load_mesh("Pillar1.obj"), metalPillarTexture)));
     Entity* pillar2 = (new Entity(new TexturedMesh(loader.load_mesh("Pillar2.obj"), metalPillarTexture)));
     Entity* pillarAttach1 = (new Entity(new TexturedMesh(loader.load_mesh("Attach1.obj"), metalHolderTexture)));
@@ -502,8 +499,10 @@ int main() {
     Entity* pillarAttach4 = (new Entity(new TexturedMesh(loader.load_mesh("Attach4.obj"), metalHolderTexture)));
     EntityGroup* environment = (new EntityGroup())
         ->add(floor)
+        ->add(floor_back)
         ->add(stage)
         ->add(screen)
+        ->add(screen_back)
         ->add(pillar1)
         ->add(pillar2)
         ->add(pillarAttach1)
@@ -557,7 +556,7 @@ int main() {
         slideShowTimer += delta_time;
 		last_time = now;
 
-        if (slideShowTimer >= 5.0)
+        if (slideShowTimer >= 10.0)
         {
             screen->set_texture(slideShow[currentSlideIndex]);
 
