@@ -369,22 +369,23 @@ void create_entities(AssetLoader & loader, EntityManager & entityManager, Entity
 
 
     EntityGroup * cristianPosition = (new EntityGroup())
-            ->translate(vec3(-64, 0, -64))
-            ->rotate(vec3(0, 45, 0))
+            ->translate(vec3(-40, 0, -10))
+            ->rotate(vec3(0, 60, 0))
             ->add(cristian);
     EntityGroup * mahdiPosition = (new EntityGroup())
-            ->translate(vec3(-64, 0, 64))
-            ->rotate(vec3(0, 135, 0))
+            ->translate(vec3(-40, 0, 10))
+            ->rotate(vec3(0, 120, 0))
             ->add(mahdi);
     EntityGroup * mahdi2Position = (new EntityGroup())
-            ->add(mahdi2);
+            ->add(mahdi2)
+            ->translate(vec3(0, 0, 15.0f));
     EntityGroup * stevenPosition = (new EntityGroup())
-            ->translate(vec3(64, 0, 64))
-            ->rotate(vec3(0, 225, 0))
+            ->translate(vec3(40, 0, 10))
+            ->rotate(vec3(0, 240, 0))
             ->add(steven);
     EntityGroup * steven2Position = (new EntityGroup())
-            ->translate(vec3(64, 0, -64))
-            ->rotate(vec3(0, 315, 0))
+            ->translate(vec3(40, 0, -10))
+            ->rotate(vec3(0, 300, 0))
             ->add(steven2);
 
     groups[0] = mahdi2Position;
@@ -440,14 +441,18 @@ int main() {
 	}
 
     // Creates the camera, used as an abstraction to calculate the view matrix
-    Camera camera(glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.4f, 0.2f, &main_window);
+    Camera camera(glm::vec3(0.0f, 80.0f, 100.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -30.0f, 0.4f, 0.2f, &main_window);
 
     // Load shader programs
 	Shader app_shader(vertex_path, fragment_path);
 	Shader omni_shadow_shader(shadow_vertex_path, shadow_fragment_path, shadow_geometry_path);
 
     // Light
-    PointLight point_light = PointLight(1024, 1024, 0.1f, 100.0f, glm::vec3(0.3f, 0.3f, 0.3f), 0.2f, 0.5f, glm::vec3(0.0, 30.0f, 0.0f), 1.0f, 0.14f, 0.07f);
+    PointLight point_light = PointLight(1024, 1024, 0.1f, 100.0f,
+                                        glm::vec3(0.3f, 0.3f, 0.3f),
+                                        0.2f, 0.5f,
+                                        glm::vec3(0.0, 30.0f, 0.0f),
+                                        1.0f, 0.14f, 0.07f);
 
 	// Init entity renderer and manager, create necessary entities
 	EntityRenderer entityRenderer(app_shader);
@@ -489,7 +494,6 @@ int main() {
     Entity* pillarAttach3 = (new Entity(new TexturedMesh(loader.load_mesh("Attach3.obj"), metalHolderTexture)));
     Entity* pillarAttach4 = (new Entity(new TexturedMesh(loader.load_mesh("Attach4.obj"), metalHolderTexture)));
     EntityGroup* environment = (new EntityGroup())
-        ->add(floor)
         ->add(floor_back)
         ->add(stage)
         ->add(screen)
@@ -499,9 +503,11 @@ int main() {
         ->add(pillarAttach1)
         ->add(pillarAttach2)
         ->add(pillarAttach3)
-        ->add(pillarAttach4);
+        ->add(pillarAttach4)
+        ->translate(vec3(0, 0, 30));
 
     entityManager.add(environment);
+    entityManager.add(floor);
 
     // The array of models
     EntityGroup * models[5];
@@ -553,6 +559,10 @@ int main() {
             selectedModel->set_translation(vec3(x, 0, z));
         } else if (key == GLFW_KEY_X && action == GLFW_RELEASE) {
             textureToggle = !textureToggle;
+        } else if (key == GLFW_KEY_SEMICOLON && action == GLFW_RELEASE) {
+            selectedModel->shearY(vec2(-0.1f, 0));
+        } else if (key == GLFW_KEY_APOSTROPHE && action == GLFW_RELEASE) {
+            selectedModel->shearY(vec2(0.1f, 0));
         }
     });
 
