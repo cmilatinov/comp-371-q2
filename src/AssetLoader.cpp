@@ -135,7 +135,7 @@ const Mesh * AssetLoader::load_mesh(const char * objFile) {
     // Colors - Fill with zero
     glGenBuffers(1, &colorsVBO);
     glBindBuffer(GL_ARRAY_BUFFER, colorsVBO);
-    glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(GLfloat), vector<GLfloat>(numVertices).data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(GLfloat), vector<GLfloat>(numVertices, 1).data(), GL_STATIC_DRAW);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void*>(0));
 
     // Normals

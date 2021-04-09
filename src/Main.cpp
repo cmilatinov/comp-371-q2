@@ -644,7 +644,7 @@ int main() {
 
         app_shader.use_shader();
         glUniform1i(app_shader.get_use_texture_location(), textureToggle);
-        glUniform1i(app_shader.get_use_lighting_location(), textureToggle);
+        glUniform1i(app_shader.get_use_lighting_location(), true);
         entityRenderer.render(camera, entityManager);
         app_shader.set_point_light(point_light);
 
