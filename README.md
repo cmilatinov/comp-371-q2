@@ -51,7 +51,7 @@
 - `R` will switch to the main FPS camera of the scene
 - `M` will switch to the front-view camera of the model
 - `B` will switch to the back-view camera of the model
-- `S` will switch to the top-down camera in front of the ceiling spotlight looking at the origin
+- `S` will switch to the top-down camera in front of the main spotlight looking at the origin
 - `E` will switch to the circling camera always looking at the origin
 - `Arrow Key Left` & `Arrow Key Right` will rotate the circling camera CW and CCW
 
