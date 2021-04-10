@@ -58,3 +58,6 @@
 - `C` will toggle the spotlight of the circling camera on and off
 - `Q` will toggle the main spotlight of the scene on and off
 - `N` will toggle the ceiling spotlight on and off
+
+### References ###
+- Code snippets for lighting calculations were taken from [https://learnopengl.com/]() and modified to fit the needs of the project.
