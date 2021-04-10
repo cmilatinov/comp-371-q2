@@ -2,13 +2,27 @@
 
 #include <cstdio>
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <fstream>
 
 #include <gl\glew.h>
 #include <glm\gtc\type_ptr.hpp>
 
-#include "PointLight.h"
+#define MAX_LIGHTS 5
+
+using std::string;
+using std::stringstream;
+
+struct UniformLight {
+    GLuint color;
+    GLuint pos;
+    GLuint dir;
+    GLuint innerCutoff;
+    GLuint outerCutoff;
+    GLuint lightSpace;
+    GLuint shadowMap;
+};
 
 class Shader
 {
@@ -30,12 +44,10 @@ public:
     GLuint get_specular_intensity_location() const { return uniform_specular_intensity; };
     GLuint get_shininess_location() const { return uniform_shininess; };
 
-    // Shadow maps
-    GLuint get_omni_light_pos_location() const { return uniform_omni_light_pos; };
-    GLuint get_far_plane_location() const { return uniform_far_plane; };
-
-    void set_point_light(PointLight p_lights) const;
-    void set_light_matrices(std::vector<glm::mat4> light_matrices);
+    // Shadow mapping
+    GLuint get_num_lights_location() const { return uniform_num_lights; };
+    GLuint get_light_space_location() const { return uniform_light_space; };
+    const UniformLight * get_light_locations() const { return uniform_lights; };
 
     void toggle_shadows();
 
@@ -45,28 +57,16 @@ public:
 	~Shader();
 
 private:
-    struct {
-        GLuint uniform_color;
-        GLuint uniform_ambient_intensity;
-        GLuint uniform_diffuse_intensity;
-        GLuint uniform_position;
-        GLuint uniform_constant;
-        GLuint uniform_linear;
-        GLuint uniform_exponent;
-    } uniform_point_light;
-
-    struct {
-        GLuint uniform_shadow_map;
-        GLuint uniform_far_plane;
-    } uniform_omni_shadow_map;
 
     bool shadow_toggle = true;
 
 	GLuint shader_ID = 0, uniform_projection = 0, uniform_model = 0, uniform_view = 0, uniform_eye_position = 0;
 	GLuint uniform_use_texture = 0, uniform_use_lighting = 0;
 	GLuint uniform_specular_intensity = 0, uniform_shininess = 0;
-	GLuint uniform_omni_light_pos = 0, uniform_far_plane = 0;
-	GLuint uniform_light_matrices[6];
+
+    UniformLight uniform_lights[MAX_LIGHTS];
+    GLuint uniform_num_lights = 0;
+    GLuint uniform_light_space = 0;
 
 	std::string read_file(const char* file_path);
 	void compile_shader(const char* vertex_code, const char* fragment_code);

@@ -25,7 +25,7 @@ EntityGroup::~EntityGroup() {
     }
 }
 
-EntityGroup * EntityGroup::add(const Entity * entity) {
+EntityGroup * EntityGroup:: add(const Entity * entity) {
     if (entity == nullptr)
         return this;
     entities.push_back(entity);

@@ -21,14 +21,14 @@ find_path(STB_INCLUDE_DIRS "stb.h")
 include_directories(src/Headers)
 
 # Clump source files from src
-file(GLOB PA2_SRC "src/*.cpp")
+file(GLOB Q2_SRC "src/*.cpp")
 
 # Add the source code to this project's executable.
-add_executable ("PA2" ${PA2_SRC})
+add_executable ("Q2" ${Q2_SRC})
 
 # Link the needed libraries along with the executable
-target_link_libraries("PA2" PRIVATE glfw GLEW::GLEW glm assimp::assimp)
-target_include_directories("PA2" PRIVATE ${STB_INCLUDE_DIRS})
+target_link_libraries("Q2" PRIVATE glfw GLEW::GLEW glm assimp::assimp)
+target_include_directories("Q2" PRIVATE ${STB_INCLUDE_DIRS})
 
 # Delete Resource directory if it already exists to prevent zombie files
 file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/src/Shaders)

@@ -21,6 +21,7 @@ public:
     const Mesh * load_mesh(const char * objFile);
 
     const Texture * load_texture_2d(const char * textureFile);
+    const Texture * load_texture_cube(const char * textureName);
 
 };
 

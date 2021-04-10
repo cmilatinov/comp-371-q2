@@ -19,10 +19,20 @@ public:
 	void key_controls(bool* keys, GLfloat delta_time, EntityGroup* const selectedModel);
 	void mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_buttons, GLfloat delta_time);
 
+	void key_controls_circle(bool* keys, GLfloat delta_time, vec3 centerPointer, float radius, float height);
+
 	glm::vec3 get_camera_position() { return position; }
 
 	glm::mat4 calculate_view_matrix() const;
 	glm::mat4 calculate_projection();
+
+	inline vec3 getFront() {
+	    return front;
+	}
+
+    inline vec3 getPosition() {
+        return position;
+    }
 
 private:
 	Window* window;
@@ -35,6 +45,7 @@ private:
 
 	GLfloat yaw;
 	GLfloat pitch;
+	GLfloat angle = 0;
 
 	GLfloat y_rotation = 0;
 	GLfloat x_rotation = 0;

@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+#include <iostream>
+
 Camera::Camera() {};
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLfloat move_speed, GLfloat turn_speed, Window* window)
@@ -44,52 +46,28 @@ void Camera::key_controls(bool* keys, GLfloat delta_time, EntityGroup* const sel
 		position.y += modified_speed;
 	}
 
-	// W - Move forward
-	if (keys[GLFW_KEY_W])
+	// I - Move forward
+	if (keys[GLFW_KEY_I])
 	{
 		position += front * modified_speed;
 	}
 
-	// S - Move backwards
-	if (keys[GLFW_KEY_S])
+	// K - Move backwards
+	if (keys[GLFW_KEY_K])
 	{
 		position -= front * modified_speed;
 	}
 
-	// A - Move left
-	if (keys[GLFW_KEY_A])
+	// J - Move left
+	if (keys[GLFW_KEY_J])
 	{
 		position -= right * modified_speed;
 	}
 
-	// D - Move right
-	if (keys[GLFW_KEY_D])
+	// L - Move right
+	if (keys[GLFW_KEY_L])
 	{
 		position += right * modified_speed;
-	}
-
-	// UP ARROW - Rotate CW around Y-Axis
-	if (keys[GLFW_KEY_UP])
-	{
-		y_rotation += -2.5;
-	}
-
-	// DOWN ARROW - Rotate CCW around Y-Axis
-	if (keys[GLFW_KEY_DOWN])
-	{
-		y_rotation += 2.5;
-	}
-
-	// LEFT ARROW - Rotate CW around X-Axis
-	if (keys[GLFW_KEY_LEFT])
-	{
-		x_rotation += -2.5;
-	}
-
-	// RIGHT ARROW - Rotate CCW around Y-Axis
-	if (keys[GLFW_KEY_RIGHT])
-	{
-		x_rotation += 2.5;
 	}
 
 	// HOME - Reset to default values (Reposition camera to origin)
@@ -123,11 +101,11 @@ void Camera::key_controls(bool* keys, GLfloat delta_time, EntityGroup* const sel
 		selectedModel->translate(glm::vec3(-.25f, 0.f, 0.f));
 	}
 	// MOVE LEFT/RIGHT
-	if (keys[GLFW_KEY_G])
+	if (keys[GLFW_KEY_A])
 	{
 		selectedModel->translate(glm::vec3(0.f, 0.f, .25f));
 	}
-	else if (keys[GLFW_KEY_J])
+	else if (keys[GLFW_KEY_D])
 	{
 		selectedModel->translate(glm::vec3(0.f, 0.f, -.25f));
 	}
@@ -139,15 +117,6 @@ void Camera::key_controls(bool* keys, GLfloat delta_time, EntityGroup* const sel
 	else if (keys[GLFW_KEY_V])
 	{
 		selectedModel->translate(glm::vec3(0.f, -.25f, 0.f));
-	}
-	// ROTATE LEFT/RIGHT
-	if (keys[GLFW_KEY_B])
-	{
-		selectedModel->rotate(glm::vec3(0.f, .5f, 0.f));
-	}
-	else if (keys[GLFW_KEY_N])
-	{
-		selectedModel->rotate(glm::vec3(0.f, -.5f, 0.f));
 	}
     // SHEAR LEFT/RIGHT
     if (keys[GLFW_KEY_COMMA])
@@ -231,18 +200,7 @@ void Camera::mouse_controls(GLfloat x_change, GLfloat y_change, bool* mouse_butt
 
 glm::mat4 Camera::calculate_view_matrix() const
 {
-	glm::mat4 view_matrix = glm::lookAt(position, position + front, up);
-
-	// If y rotation values are set apply the appropriate changes to our view matrix
-	if (y_rotation != 0) {
-		view_matrix = glm::rotate(view_matrix, glm::radians(y_rotation), glm::vec3(0.0f, -1.0f, 0.0f));
-	}
-	// If x rotation values are set apply the appropriate changes to our view matrix
-	if (x_rotation != 0) {
-		view_matrix = glm::rotate(view_matrix, glm::radians(x_rotation), glm::vec3(-1.0f, 0.0f, 0.0f));
-	}
-
-	return view_matrix;
+	return glm::lookAt(position, position + front, up);
 }
 
 glm::mat4 Camera::calculate_projection()
@@ -265,4 +223,15 @@ void Camera::update()
 
 	right = glm::normalize(glm::cross(front, world_up));
 	up = glm::normalize(glm::cross(right, front));
+}
+
+
+void Camera::key_controls_circle(bool * keys, GLfloat delta_time, vec3 centerPoint, float radius, float height) {
+    float delta = 90.0f * static_cast<float>(keys[GLFW_KEY_LEFT] + keys[GLFW_KEY_RIGHT] * -1) * delta_time;
+    angle += delta;
+
+    position = radius * vec3(cos(glm::radians(angle)), 0, sin(glm::radians(angle)));
+    position.y = height;
+    up = vec3(0, 1, 0);
+    front = glm::normalize(centerPoint - position);
 }

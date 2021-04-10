@@ -1,90 +1,62 @@
 #version 330
 
+const int MAX_LIGHTS = 5;
+const float AMBIENT_LIGHT = 0.2;
+
 in vec3 pass_pos;
 in vec3 pass_color;
 in vec3 pass_normal;
 in vec2 pass_uv;
+in vec4 fragPosLightSpace[MAX_LIGHTS];
 
 out vec4 colour;
 
-struct Light
-{
+struct Light {
+	mat4 lightSpace;
+	float innerCutoff;
+	float outerCutoff;
 	vec3 color;
-	float ambient_intensity;
-	float diffuse_intensity;
+	vec3 pos;
+	vec3 dir;
+	sampler2D shadowMap;
 };
 
-struct PointLight
-{
-	Light base;
-	vec3 position;
-	float constant;
-	float linear;
-	float exponent;
-};
-
-// Specular lighting
-struct Material
-{
+struct Material {
 	float specular_intensity;
 	float shininess;
 };
 
-struct OmniShadowMap
-{
-	samplerCube shadow_map;
-	float far_plane;
-};
-
-uniform int point_light_count;
-
-uniform PointLight point_light;
-
 uniform Material material;
-// Camera position
 uniform vec3 eye_position;
-
 uniform bool shadow_toggle = true;
-
-uniform OmniShadowMap omni_shadow_map;
-
 uniform bool use_texture = true;
 uniform bool use_lighting = true;
 uniform sampler2D tex;
 
-vec3 gridSamplingDisk[20] = vec3[]
-(
-	vec3(1, 1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1, 1,  1),
-	vec3(1, 1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
-	vec3(1, 1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1, 1,  0),
-	vec3(1, 0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1, 0, -1),
-	vec3(0, 1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0, 1, -1)
-);
+uniform Light lights[MAX_LIGHTS];
+uniform int num_lights;
 
-float ShadowCalculation(vec3 fragPos)
-{
-	// get vector between fragment position and light position
+float shadowCalculation(vec4 fragPos, sampler2D shadowMap, vec3 normal, vec3 lightDir) {
+	if (!shadow_toggle)
+		return 1.0f;
 
-	vec3 fragToLight = fragPos - point_light.position;
+	vec3 projCoords = fragPos.xyz / fragPos.w;
+	projCoords = projCoords * 0.5 + 0.5;
 
-	float currentDepth = length(fragToLight);
+	float closestDepth = texture(shadowMap, projCoords.xy).r;
+	float currentDepth = projCoords.z;
 
+	float bias = max(0.003 * (1.0 - dot(normal, lightDir)), 0.0003);
 	float shadow = 0.0;
-	float bias = 0.15;
-	int samples = 20;
-	float viewDistance = length(eye_position - fragPos);
-	float diskRadius = (1.0 + (viewDistance / omni_shadow_map.far_plane)) / 25.0;
-
-	for(int i = 0; i < samples; ++i)
-	{
-		float closestDepth = texture(omni_shadow_map.shadow_map, fragToLight + gridSamplingDisk[i] * diskRadius).r;
-		closestDepth *= omni_shadow_map.far_plane;   // undo mapping [0;1]
-		if(currentDepth - bias > closestDepth)
-		shadow += 1.0;
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	const int kernelSize = 3;
+	for(int x = -(kernelSize - 1) / 2; x <= 1; x++) {
+		for(int y = -(kernelSize - 1) / 2; y <= 1; y++) {
+			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+		}
 	}
-	shadow /= float(samples);
-
-	return shadow;
+	return 1.0 - (shadow / (kernelSize * kernelSize));
 }
 
 void main()
@@ -98,27 +70,26 @@ void main()
 		return;
 	}
 
-	vec3 normal = normalize(pass_normal);
+	// Lighting calculations
+	vec3 lighting = color * AMBIENT_LIGHT;
+	for (int i = 0; i < num_lights; i++) {
+		vec3 normal = normalize(pass_normal);
+		vec3 lightDir = normalize(lights[i].pos - pass_pos);
 
-	// ambient
-	vec3 ambient = 0.3 * color;
+		// Check that fragment is in spotlight cone
+		float theta = dot(lightDir, normalize(-lights[i].dir));
+		float epsilon = lights[i].innerCutoff - lights[i].outerCutoff;
+		float intensity = clamp((theta - lights[i].outerCutoff) / epsilon, 0.0, 1.0);
+		if (theta > lights[i].outerCutoff) {
+			float diffuse = max(dot(normal, lightDir), 0.0);
+			vec3 viewDir = normalize(eye_position - pass_pos);
+			vec3 reflectDir = reflect(-lightDir, normal);
+			float specular = material.specular_intensity * pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+			float shadow = shadowCalculation(fragPosLightSpace[i], lights[i].shadowMap, normal, lightDir);
 
-	// diffuse
-	vec3 lightDir = normalize(point_light.position - pass_pos);
-	float diff = max(dot(lightDir, normal), 0.0);
-	vec3 diffuse = diff * point_light.base.color;
-
-	// specular
-	vec3 viewDir = normalize(eye_position - pass_pos);
-	vec3 reflectDir = reflect(-lightDir, normal);
-	float spec = 0.0;
-	vec3 halfwayDir = normalize(lightDir + viewDir);
-	spec = pow(clamp(dot(normal, halfwayDir), 0.0, 1.0), material.shininess) * material.specular_intensity;
-	vec3 specular = spec * point_light.base.color;
-
-	// calculate shadow
-	float shadow = shadow_toggle ? ShadowCalculation(pass_pos) : 0.0;
-	vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
+			lighting += (diffuse + specular) * intensity * shadow * lights[i].color * color;
+		}
+	}
 
 	colour = vec4(lighting, 1.0);
 }

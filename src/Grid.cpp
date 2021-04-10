@@ -1,4 +1,4 @@
-#include <GL/glew.h>
+#include <gl/glew.h>
 #include <glm/glm.hpp>
 
 #include "Grid.h"

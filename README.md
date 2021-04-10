@@ -28,30 +28,33 @@
 
 ### Controls ###
 
-- `WASD` will move the camera relative to the direction you are looking at.
+- `IJKL` will move the main FPS camera relative to the direction you are looking at.
 - `Left Shift` will make you move faster.
 - `Space` will move you vertically up along the `y-axis`.
 - `Left Control` will move you down along the `y-axis`.
-- `Arrow Key Up` & `Arrow Key Down` will rotate the world around `y-axis`.
-- `Arrow Key Left` & `Arrow Key Right` will rotate the world around `x-axis`.
-- `Home` will reset all world and camera transformations.
+- `Home` will reset all world and camera transformations. 
 - `Left Mouse Button` will make all vertical mouse movements a zoom in/out of the scene.
 - `Z` will reset the zoom to its default value.
-- `1 to 5` will select a model on the map. Default is `0`, which is the model at the center.
-	- `I` will scale the model up by 5% of its current size.
-	- `K` will scale the model down by 5% of its current size.
+- `1 to 6` will select a model on the map. Default is `0`, which is the model at the center.
 	- `Y` will move the model along `x`.
 	- `H` will move the model along `-x`.
-	- `G` will move the model along `z`.
-	- `J` will move the model along `-z`.
+	- `A` will move the model along `z`.
+	- `D` will move the model along `-z`.
 	- `F` will move the model along `y`.
 	- `V` will move the model along `-y`.
-	- `B` & `N` will rotate the model on its `y` by 0.5 degrees.
-	- `R` to randomly position the model on the grid
-	- `,` and `.` to shear the model continuously
-	- `;` and `'` to shear the model by an increment of 0.1 units
 - `Mouse Button 4` will make mouse movements move the camera only along its `x-axis` and `y-axis` plane.
 - `Middle Mouse Button` will make all vertical mouse movements change the camera's pitch.
 - `Left Mouse Button` will make all horizontal mouse movements change the camera's yaw.
-- `[` will unlock the mouse cursor from the window.
-- `X` will toggle the textures on and off of all the models
+- `X` will toggle the textures on and off of all the models, except the skybox
+- `[` will toggle the shadows cast by lights on and off
+
+- `R` will switch to the main FPS camera of the scene
+- `M` will switch to the front-view camera of the model
+- `B` will switch to the back-view camera of the model
+- `S` will switch to the top-down camera in front of the ceiling spotlight looking at the origin
+- `E` will switch to the circling camera always looking at the origin
+- `Arrow Key Left` & `Arrow Key Right` will rotate the circling camera CW and CCW
+
+- `C` will toggle the spotlight of the circling camera on and off
+- `Q` will toggle the main spotlight of the scene on and off
+- `N` will toggle the ceiling spotlight on and off

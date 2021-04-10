@@ -3,12 +3,21 @@
 
 EntityRenderer::EntityRenderer(const Shader & shader) : shader(shader) {}
 
-void EntityRenderer::render(const Camera & camera, const map<const TexturedMesh*, vector<const Entity*>> & entities) {
-
+void EntityRenderer::startRender(const Camera & camera) const {
     // Enable shader, load view matrix
     shader.use_shader();
     glUniformMatrix4fv(shader.get_view_location(), 1, GL_FALSE, glm::value_ptr(camera.calculate_view_matrix()));
+}
 
+
+void EntityRenderer::startRender(const Spotlight * spotlight) const {
+    // Enable shader, load light space matrix
+    shader.use_shader();
+    mat4 matrix = spotlight->calculate_light_space();
+    glUniformMatrix4fv(shader.get_light_space_location(), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+void EntityRenderer::render(const map<const TexturedMesh *, vector<const Entity *>> & entities) const {
     for (const auto & entry : entities) {
         const Mesh * mesh = entry.first->get_mesh();
         const Texture * texture = entry.first->get_texture();
@@ -44,23 +53,37 @@ void EntityRenderer::render(const Camera & camera, const map<const TexturedMesh*
 
     // Unbind VAO
     glBindVertexArray(0);
-
 }
 
-void EntityRenderer::render(const Camera & camera, const vector<const EntityGroup *> & entityGroups) {
-    // Enable shader, load view matrix
-    shader.use_shader();
-    glUniformMatrix4fv(shader.get_view_location(), 1, GL_FALSE, glm::value_ptr(camera.calculate_view_matrix()));
-
+void EntityRenderer::render(const vector<const EntityGroup *> & entityGroups) const {
     for (const EntityGroup * group : entityGroups) {
         render(mat4(1.0f), group);
     }
-
     // Unbind VAO
     glBindVertexArray(0);
 }
 
-void EntityRenderer::render(const mat4 & parentTransform, const EntityGroup * group) {
+void EntityRenderer::render(const Spotlight * spotlight, const map<const TexturedMesh *, vector<const Entity *>> & entities) const {
+    startRender(spotlight);
+    render(entities);
+}
+
+void EntityRenderer::render(const Spotlight * spotlight, const vector<const EntityGroup *> & entityGroups) const {
+    startRender(spotlight);
+    render(entityGroups);
+}
+
+void EntityRenderer::render(const Camera & camera, const map<const TexturedMesh*, vector<const Entity*>> & entities) const {
+    startRender(camera);
+    render(entities);
+}
+
+void EntityRenderer::render(const Camera & camera, const vector<const EntityGroup *> & entityGroups) const {
+    startRender(camera);
+    render(entityGroups);
+}
+
+void EntityRenderer::render(const mat4 & parentTransform, const EntityGroup * group) const {
 
     // Transform for the group
     mat4 groupTransform = group->create_transform();

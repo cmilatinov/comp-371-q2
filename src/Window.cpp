@@ -109,7 +109,7 @@ void Window::handle_keys(GLFWwindow* window, int key, int code, int action, int 
 	}
 
 	// Chose the polygon mode for rendering
-	if (window_instance->key_state[GLFW_KEY_L])
+	if (window_instance->key_state[GLFW_KEY_O])
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}

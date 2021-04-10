@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -192,4 +193,40 @@ const Texture * AssetLoader::load_texture_2d(const char * textureFile) {
     stbi_image_free(data);
 
     return new Texture(GL_TEXTURE_2D, texID);
+}
+
+const Texture * AssetLoader::load_texture_cube(const char * textureName) {
+
+    GLuint texID;
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
+
+    std::string path = "assets/textures/" + std::string(textureName);
+    std::stringstream ss;
+
+    int width, height, numChannels;
+    unsigned char *data;
+    for(unsigned int i = 0; i < 6; i++) {
+        ss = std::stringstream("");
+        ss << path << i << ".jpg";
+        std::string imagePath = ss.str();
+        data = stbi_load(imagePath.c_str(), &width, &height, &numChannels, 0);
+        if (!data) {
+            std::cout << "Failed to load texture" << std::endl;
+            return nullptr;
+        }
+        if (numChannels == 3)
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        else if (numChannels == 4)
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        stbi_image_free(data);
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    return new Texture(GL_TEXTURE_CUBE_MAP, texID);
 }
